@@ -10,7 +10,7 @@ novo. Nada permanente aponta para ele — teste e código citam id de spec, nunc
 > A menor coisa que uma pessoa consegue ver funcionando.
 
 Ver funcionando é qualquer coisa observável: uma resposta HTTP, uma linha no banco, algo
-na tela, uma mensagem no log. Vale versão descartável — guardar na memória em vez de no
+na tela, um arquivo gerado, uma mensagem no log. Vale versão descartável — guardar na memória em vez de no
 banco, cubo branco em vez de modelo 3D — desde que dê para ver.
 
 **Task não é passo de implementação.** "Criar a entidade" e "adicionar o repositório" não
@@ -30,6 +30,8 @@ decoração de um trabalho que aconteceu todo de uma vez.
 
 ## ESTRUTURA
 
+Numa API web:
+
 ````markdown
 ## |.| T2 · Aceitar um convite pelo código
 
@@ -48,9 +50,26 @@ Cenário: aceitar convite que já foi usado
 - **Decisões que usa** — `S4` `P2`
 ````
 
-Título no imperativo, dizendo o que passa a funcionar — não o nome do endpoint nem o da
-classe. Prosa abaixo do cenário só quando carrega uma razão que o cenário não carrega;
-sem isso, os dois campos vêm direto.
+Num jogo em Unity, os mesmos campos:
+
+````markdown
+## |.| T4 · Cair de muito alto tira vida
+
+```gherkin
+Cenário: cair da plataforma mais alta
+  Dado o jogador com a vida cheia, na plataforma mais alta do salão
+  Quando ele pula para o chão
+  Então a vida cai perto da metade, sem chegar a zero
+  E o jogador continua de pé
+```
+
+- **Mexe em** — `Jogador.cs`, `ZonaDeQueda.cs`, cena `Salao`
+- **Decisões que usa** — `S2`
+````
+
+Título no imperativo, dizendo o que passa a funcionar. Nome de arquivo, classe ou chamada
+pode aparecer dentro dele, nunca no lugar do comportamento. Prosa abaixo do cenário só
+quando carrega uma razão que o cenário não carrega; sem isso, os dois campos vêm direto.
 
 ## ESTADO
 
@@ -82,10 +101,12 @@ para dezenas de idiomas: em português, `Cenário`, `Dado`, `Quando`, `Então`, 
 do Cenário`, `Exemplos`. O artefato é lido por quem trabalha no projeto — trocar o idioma
 dele por realce de sintaxe é mau negócio, e nem todo renderizador colore as traduções.
 
-**Isto não é Cucumber.** Não existe `.feature`, não existe step definition, nada disso
-roda. É texto para uma pessoa ler e conferir com o produto na frente. Gherkin entrou
-porque separar estado inicial, ação e resultado funciona em qualquer tipo de projeto —
-API, jogo, linha de comando —, e nenhum outro formato serviu aos três.
+**O cenário não roda.** Ele não é step definition e ninguém o executa: é texto para uma
+pessoa ler e conferir com o produto na frente. Num projeto que tem Gherkin executável, esses
+arquivos são código do produto — entram no `Mexe em` como qualquer outro, e o cenário da
+task continua sendo texto. Gherkin entrou porque separar estado inicial, ação e resultado
+funciona em qualquer tipo de projeto — API, jogo, linha de comando —, e nenhum outro
+formato serviu aos três.
 
 **O `Dado` é o estado inicial.** Omita quando for o padrão do projeto e escreva quando não
 for: cena, posição, saldo, arquivo já existente. Num backend ele quase sempre some, porque
@@ -96,9 +117,9 @@ que a pessoa viu era o esperado.
 "recebo a resposta certa". Descrição do resultado no lugar do resultado é o jeito
 silencioso de a verificação passar a aceitar qualquer coisa.
 
-**Onde entram tempo, frame ou física, o resultado é faixa.** `a barra chega perto da
-metade, sem esvaziar de uma vez` — nunca `fica em exatamente 50`. Número exato ali falha
-em outra máquina e ensina quem confere a ignorar o resultado.
+**Onde entram tempo, frame ou física, o resultado é faixa.** `a porta termina de abrir em
+menos de um segundo` — nunca `abre em exatamente 0,5s`. Número exato ali falha em outra
+máquina e ensina quem confere a ignorar o resultado.
 
 Mesma regra com várias entradas vira `Esquema do Cenário` com tabela de `Exemplos`, em vez
 de cenários quase iguais em sequência.
@@ -107,8 +128,8 @@ Dois ou três cenários por task. Mais que isso, quase sempre são duas tasks.
 
 ## OS CAMPOS
 
-**Mexe em** — arquivos e artefatos, incluindo o que não é código: migration, cena, prefab,
-configuração. Diz onde o trabalho cai, não o que fazer lá dentro. Num CRUD várias tasks
+**Mexe em** — arquivos e artefatos, incluindo o que não é código: migration de banco, cena
+ou prefab de um jogo em Unity, arquivo de configuração. Diz onde o trabalho cai, não o que fazer lá dentro. Num CRUD várias tasks
 repetem os mesmos dois arquivos, e está certo — o campo não mede tamanho.
 
 Arquivo que ainda não existe entra pelo nome mesmo assim, e o nome é provisório: quem
@@ -121,6 +142,13 @@ seis vezes.
 **Assumido** — só quando a task precisou de uma decisão que ninguém tomou. Uma linha, ao
 lado de onde a suposição foi usada. A mesma vai para a saída do skill, onde o usuário
 decide se ela sobe para a spec.
+
+A suposição entra mesmo quando o cenário já a mostra: o cenário diz o que acontece, o campo
+diz que ninguém decidiu.
+
+Não registre o que a task deixou de fora. "O convite não tem limite de usos" é decisão de
+uma feature que ainda não existe — escrever isso aqui é a primeira aparição dela no
+sistema, e a próxima é uma task para resolvê-la.
 
 ## RESULTADO QUE É "NADA MUDOU"
 
@@ -153,15 +181,15 @@ ferramenta que reprova o projeto inteiro. Ele resolve e segue:
 > dá para saber se uma verificação abaixo falhou por causa do trabalho novo.
 ````
 
-**Coisa que ainda não existe** — a feature depende de outra que ninguém escreveu. Ele
-descobre que veio cedo demais:
+**Coisa que ainda não existe** — a feature depende de outra que ninguém escreveu, ou de um
+serviço que roda fora deste repositório. Ele descobre que veio cedo demais:
 
 ````markdown
 > [!IMPORTANT]
 > **Esta lista pressupõe que já existem**
 >
 > Um cadastro de cliente e um serviço de cobrança. Nada disso é task daqui: são outra
-> feature, e sem elas nenhuma verificação abaixo pode ser feita.
+> feature ou outro repositório, e sem elas nenhuma verificação abaixo pode ser feita.
 ````
 
 Use o alerta nativo, nunca `<div>` com `style` inline: o GitHub remove estilo inline por

@@ -23,7 +23,7 @@ não cria `.feature`.
    entra na proposta do PASSO 3, que é a única parada.
 2. **Convenções do projeto** — `CLAUDE.md` e arquivo de convenções, se existirem. Não
    havendo nenhum dos dois, tire do próprio repositório: idioma dos comentários, formato
-   das mensagens de commit, quem é dono do schema.
+   das mensagens de commit, quem é dono do schema do banco.
 3. **O repositório** — o que já existe do que a feature cita, e o que ela vai precisar que
    ainda não existe.
 4. **O que atrapalha** — dependência instalada que bloqueia toda chamada, configuração que
@@ -43,10 +43,10 @@ Versão descartável é permitida e costuma ser a primeira task: guardar na mem�
 no banco, cubo branco em vez de modelo, valor chumbado em vez de configuração. Ela existe
 para adiantar o que dá para ver, e some numa task própria mais adiante.
 
-**Ela não é obrigatória, e tem um caso em que atrapalha:** quando a infraestrutura
-definitiva já está de pé e a aplicação nem sobe sem ela, a versão descartável custa uma
-task para criar e outra para desfazer, em troca de quase nada. Aí vá direto ao definitivo e
-diga na saída que não houve versão descartável.
+**Ela não é obrigatória, e tem um caso em que atrapalha:** quando a versão descartável
+custa mais trabalho que a definitiva — a tabela já existe, a cena já está montada, o dado
+já vem pronto. Custar menos e parecer inacabado não é esse caso. Aí vá direto ao definitivo
+e diga na saída que não houve versão descartável.
 
 A ordem sai de quem depende de quem, não de camadas nem de importância. A task que troca a
 versão descartável pela definitiva entra no ponto em que alguém passa a depender dela — e
@@ -56,18 +56,26 @@ esse ponto muda de projeto para projeto.
 
 Uma linha por task, na ordem, sem cenário nenhum. É aqui que o corte é barato de mudar:
 
-```
-T1  criar convite, guardando na memória
-T2  aceitar um convite pelo código
-T3  o convite continua valendo depois do reinício
-T4  listar os convites de quem enviou
-T5  recusar código expirado
+````markdown
+## criar convite — 5 tasks
 
-Fora da lista: a suíte já está vermelha — vira aviso, não task.
-Sem spec: as tasks nascem sem id para referenciar e as decisões de produto viram
-  suposição minha.
-Confirma? (edite a linha que estiver errada)
-```
+| id | passa a funcionar |
+|----|-------------------|
+| `T1` | criar convite, guardando na memória |
+| `T2` | aceitar um convite pelo código |
+| `T3` | o convite continua valendo depois do reinício |
+| `T4` | listar os convites de quem enviou |
+| `T5` | recusar código expirado |
+
+**Fora da lista** — a suíte já está vermelha: vira aviso, não task.
+
+**Sem spec** — as tasks nascem sem id para citar, e decisão de produto vira suposição
+minha.
+
+Confirma? Ou diga o que muda — outra ordem, juntar duas, cortar uma, ou algo que faltou.
+````
+
+Os dois rótulos de baixo só entram quando há o que relatar — mesma regra do PASSO 5.
 
 **Pare aqui, e só aqui.** Escrever oito cenários antes de acertar o corte é jogar fora oito
 cenários — e parar duas vezes numa feature pequena é atrito que o usuário paga sem receber
@@ -91,19 +99,25 @@ silêncio é como uma decisão de produto entra no sistema sem ninguém ter deci
 
 O arquivo, e depois o que ele não mostra:
 
-```
-5 tasks · 2 usam versão descartável, trocada na T3.
-Aviso: suíte de testes já vermelha — resolver antes da T1.
-Faltam decisões: ordem da listagem (assumi mais novo primeiro) · aceitar duas vezes
-  (assumi 409). Sobem para a spec ou confirme aqui.
-Sem plan: o nível de teste da feature não está decidido em lugar nenhum.
-```
+````markdown
+`specs/criar-convite/tasks.md` — 5 tasks, 2 na versão descartável, trocada na T3.
 
-- **Só o detectado.** Lembrete genérico contamina os avisos reais, porque o usuário
-  aprende a pular a seção inteira.
+**Aviso** — suíte de testes já vermelha: resolver antes da T1.
+
+**Faltam decisões** — sobem para a spec, ou confirme aqui:
+
+- ordem da listagem (assumi mais novo primeiro)
+- aceitar o mesmo convite duas vezes (assumi 409)
+
+**Sem plan** — o nível de teste da feature não está decidido em lugar nenhum.
+
+tasks OK? posso começar pela T1?
+````
+
+- **Só o detectado.** Rótulo em negrito parece seção obrigatória, e seção que aparece
+  sempre — às vezes só para dizer que não há nada — ensina o usuário a pular a parte de
+  baixo inteira.
 - **Números são observação, nunca nota.** Reporte a contagem, não julgue por ela.
-
-Feche com: "tasks OK? posso começar pela T1?"
 
 ## NÃO-OBJETIVOS
 
