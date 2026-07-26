@@ -30,6 +30,8 @@ decoração de um trabalho que aconteceu todo de uma vez.
 
 ## ESTRUTURA
 
+O arquivo abre com `# <feature> — tasks`, e cada task é um `##`.
+
 Numa API web:
 
 ````markdown
@@ -129,8 +131,9 @@ Dois ou três cenários por task. Mais que isso, quase sempre são duas tasks.
 ## OS CAMPOS
 
 **Mexe em** — arquivos e artefatos, incluindo o que não é código: migration de banco, cena
-ou prefab de um jogo em Unity, arquivo de configuração. Diz onde o trabalho cai, não o que fazer lá dentro. Num CRUD várias tasks
-repetem os mesmos dois arquivos, e está certo — o campo não mede tamanho.
+ou prefab de um jogo em Unity, arquivo de configuração. Diz onde o trabalho cai, não o que
+fazer lá dentro. Num CRUD várias tasks repetem os mesmos dois arquivos, e está certo — o
+campo não mede tamanho.
 
 Arquivo que ainda não existe entra pelo nome mesmo assim, e o nome é provisório: quem
 decide o desenho é o plan, e ele troca sem que a task mude.
@@ -139,12 +142,22 @@ decide o desenho é o plan, e ele troca sem que a task mude.
 sem plan o campo não aparece**; escrever "nenhuma" em toda task é a mesma linha repetida
 seis vezes.
 
-**Assumido** — só quando a task precisou de uma decisão que ninguém tomou. Uma linha, ao
-lado de onde a suposição foi usada. A mesma vai para a saída do skill, onde o usuário
-decide se ela sobe para a spec.
+**Assumido** — só quando a task precisou de uma decisão que ninguém tomou, ao lado de onde
+a suposição foi usada. Mais de uma vira lista, nunca o rótulo repetido:
+
+````markdown
+- **Assumido**
+  - o limite do nome é 120 caracteres
+  - nome repetido é permitido
+````
+
+As mesmas vão para a saída do skill, onde o usuário decide se sobem para a spec.
 
 A suposição entra mesmo quando o cenário já a mostra: o cenário diz o que acontece, o campo
 diz que ninguém decidiu.
+
+Lista comprida é sinal, não sujeira — é a falta de spec ficando visível no artefato, onde o
+usuário tropeça nela. Não junte suposições nem resuma para o campo ficar curto.
 
 Não registre o que a task deixou de fora. "O convite não tem limite de usos" é decisão de
 uma feature que ainda não existe — escrever isso aqui é a primeira aparição dela no

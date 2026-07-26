@@ -39,9 +39,15 @@ você faria sozinho, e ele deixa a primeira coisa visível para o fim — que é
 sobra tempo de mudar de ideia. O corte certo atravessa as camadas todas de uma vez, para
 um comportamento só.
 
-Versão descartável é permitida e costuma ser a primeira task: guardar na memória em vez de
-no banco, cubo branco em vez de modelo, valor chumbado em vez de configuração. Ela existe
-para adiantar o que dá para ver, e some numa task própria mais adiante.
+Versão descartável é permitida e costuma ser a primeira task: devolver o objeto montado sem
+salvar, guardar na memória em vez de no banco, cubo branco em vez de modelo, valor chumbado
+em vez de configuração. Ela existe para adiantar o que dá para ver, e some numa task própria
+mais adiante.
+
+**Fique na mais rasa que os cenários aceitam.** Guardar só é preciso se algum cenário da
+própria task lê o dado de volta. Se todos olham apenas o que a chamada devolveu, o objeto
+montado na hora já basta — guardar numa lista custa trabalho para fazer, mais trabalho para
+desfazer, e nenhum cenário pediu.
 
 **Ela não é obrigatória, e tem um caso em que atrapalha:** quando a versão descartável
 custa mais trabalho que a definitiva — a tabela já existe, a cena já está montada, o dado
