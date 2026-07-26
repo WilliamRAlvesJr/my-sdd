@@ -1,6 +1,5 @@
 {
   "name": "my-spec",
-  "version": "0.1.0",
   "description": "my-sdd — spec-anchored development for Claude Code. Três artefatos (spec/plan/tasks), triagem por incerteza, domínio on-the-fly. Spec carrega a decisão, código é a verdade executável, testes são o enforcer.",
   "author": { "name": "William Alves" },
   "license": "MIT",
