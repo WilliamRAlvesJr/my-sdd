@@ -1,0 +1,19 @@
+# Andaime de construção, não faz parte do framework.
+
+# Projetos de terceiros e o lab-rat. Cada um tem o próprio .git, e o
+# my-kanban-api guarda credenciais reais no .env.
+Temp/
+
+# Exemplos escritos à mão que originaram o formato.
+TESTS/
+
+# Versão anterior do framework, mantida como referência.
+OLD/
+
+# Instruções de construção do framework, não de uso. Por enquanto fora.
+CLAUDE.md
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini

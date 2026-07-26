@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "my-sdd-marketplace",
+  "description": "my-sdd — spec-anchored development for Claude Code",
+  "owner": { "name": "William Alves" },
+  "plugins": [
+    {
+      "name": "my-spec",
+      "description": "Fluxo spec-anchored: triagem → spec → plan → tasks → build → check. Três artefatos com ciclos de vida distintos. Domínio on-the-fly por caminho.",
+      "source": "./",
+      "category": "development"
+    }
+  ]
+}
