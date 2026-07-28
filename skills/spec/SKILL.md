@@ -98,14 +98,20 @@ Pergunta escrita em prosa é respondida em prosa, quando é respondida; e você 
 seguir escrevendo o arquivo como se tivesse sido. Com o seletor não há como continuar
 sem a resposta.
 
-**Repita mensagem e seletor até não sobrar decisão.** Resposta que muda a lista devolve a
-tabela corrigida, com os avisos ajustados ao que ficou, e um seletor novo; havendo mais de
-quatro decisões, as outras vêm na rodada seguinte. Você sai do PASSO 3 com a lista
-confirmada e nada pendente.
+**O passo é um ciclo, não uma pergunta.** Cada volta:
 
-Rodada nova só existe se a anterior deixou pendência ou se a resposta abriu uma. **Não
-levante decisão para ter o que perguntar** — o loop termina quando as decisões acabam, e
-elas acabam.
+1. a mensagem acima, com a lista como está agora e os avisos ajustados ao que ficou;
+2. uma chamada de `AskUserQuestion`, até quatro perguntas;
+3. aplique as respostas à lista — e volte ao 1.
+
+**Você sai do ciclo pela resposta que confirma a lista, com nada pendente**, e por mais
+nada. Havendo mais de quatro decisões, as outras vêm na volta seguinte. Você tende a
+tratar a primeira chamada como a regra cumprida e seguir para o PASSO 4 — e aí a lista
+corrigida nunca chega a ser vista por quem pediu a correção.
+
+Volta nova só existe se a anterior deixou pendência ou se a resposta abriu uma. **Não
+levante decisão para ter o que perguntar** — as decisões acabam, e a última pergunta é a
+confirmação da lista.
 
 **Lista longa se divide em specs, nunca pela metade.** Vinte comportamentos quase sempre
 querem dizer que ali tem mais de uma feature: um CRUD de pessoa é cadastro, consulta e
@@ -213,13 +219,17 @@ herdada, cuja resposta vale para as próximas specs; uma pelo resultado observá
 quando houver. Aviso e "ficou de fora" não entram — o primeiro não se decide aqui, o
 segundo já foi decidido no PASSO 3.
 
-**Repita até não sobrar decisão**, como no PASSO 3, e aqui cada resposta muda o arquivo:
-grave a mudança, reemita o relato acima já ajustado — contagem, assumidos, o que ficou caro
-— e abra o seletor de novo com o que sobrou. Passando de quatro perguntas, vão as decisões
-assumidas primeiro e as outras vêm na rodada seguinte.
+**Também é um ciclo**, como o PASSO 3, e aqui cada resposta muda o arquivo. Cada volta:
 
-Não sobrando nenhuma, o seletor pergunta só se a spec está certa. É a última rodada sempre,
-e a única quando não houve decisão alguma.
+1. grave o arquivo como está decidido até agora;
+2. emita o relato acima já ajustado — contagem, assumidos, o que ficou caro;
+3. uma chamada de `AskUserQuestion` com o que sobrou, decisões assumidas primeiro;
+4. aplique as respostas — e volte ao 1.
+
+**A última volta é sempre a confirmação da spec**, pergunta única: a spec está certa? Ela
+acontece depois da última decisão respondida, e acontece igual quando não houve decisão
+nenhuma. Acabar as perguntas não termina o passo; a confirmação termina. Sem ela você
+entrega um arquivo que ninguém aprovou.
 
 Com `--assume` não há seletor nenhum: a mensagem acima é a saída inteira, e as decisões
 que ela lista já estão no arquivo. Diga na primeira linha que rodou assim — o usuário
