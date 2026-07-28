@@ -81,10 +81,17 @@ Uma linha por comportamento, sem cenário nenhum:
 requisição. Enquanto continuar assim, nenhum cenário acima pode ser verificado.
 
 **Fora da lista** — expiração e revogação parecem vir junto, mas não estavam no pedido.
-Entram nesta spec ou ficam para depois?
-
-Confirma?
 ````
+
+**A pergunta vai no seletor de opções, não no texto** — uma chamada de `AskUserQuestion`
+logo depois da mensagem. A tabela e os avisos ficam onde estão, porque não cabem em rótulo
+de opção; no seletor vai só o que o usuário decide. Para a lista acima: *a lista está
+certa?* — confirmar, ajustar, dividir em specs — e *expiração e revogação?* — ficam de
+fora, entram nesta spec. Uma pergunta por decisão, no mesmo seletor, até quatro.
+
+Pergunta escrita em prosa é respondida em prosa, quando é respondida; e você tende a
+seguir escrevendo o arquivo como se tivesse sido. Com o seletor não há como continuar
+sem a resposta.
 
 **Lista longa se divide em specs, nunca pela metade.** Vinte comportamentos quase sempre
 querem dizer que ali tem mais de uma feature: um CRUD de pessoa é cadastro, consulta e
