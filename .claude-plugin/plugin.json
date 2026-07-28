@@ -1,6 +1,6 @@
 {
   "name": "my-spec",
-  "description": "my-sdd — spec-anchored development for Claude Code. Três artefatos (spec/plan/tasks), triagem por incerteza, domínio on-the-fly. Spec carrega a decisão, código é a verdade executável, testes são o enforcer.",
+  "description": "my-sdd — BDD conduzido pelo agente. A spec da feature são cenários Gherkin que uma pessoa confere olhando o sistema rodar, e cada um é verificado de ponta a ponta contra o sistema de verdade.",
   "author": { "name": "William Alves" },
   "license": "MIT",
   "keywords": [

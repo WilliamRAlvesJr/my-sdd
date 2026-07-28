@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "my-spec",
-      "description": "Fluxo spec-anchored: triagem → spec → plan → tasks → build → check. Três artefatos com ciclos de vida distintos. Domínio on-the-fly por caminho.",
+      "description": "BDD conduzido pelo agente: spec → plan → tasks → build → check. A spec são cenários Gherkin, e cada um é verificado de ponta a ponta contra o sistema de verdade.",
       "source": "./",
       "category": "development"
     }
