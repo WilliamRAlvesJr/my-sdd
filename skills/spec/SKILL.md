@@ -172,21 +172,29 @@ O arquivo, e depois o que ele não mostra:
 **Aviso** — a dependência de autenticação responde 401 a toda requisição, e até isso mudar
 nenhum cenário daqui pode ser verificado.
 
-**Faltam decisões de produto** — confirme, ou eu sigo com o assumido:
+**Faltam decisões de produto** — o valor assumido já está gravado, e trocá-lo é editar uma
+linha do `Então`:
 
 - ordem da listagem (assumi mais novo primeiro)
 - aceitar o mesmo convite duas vezes (assumi 409)
 
 **Segui a convenção do repositório** — a criação responde 201 com `Location`, e o corpo
-repete o que foi criado. Confirme uma vez e eu paro de perguntar.
+repete o que foi criado.
 
 **Ficou de fora** — expiração e revogação, que não estavam no pedido.
 
 **Custa caro verificar** — o `S1` termina em e-mail entregue, e isso pede um servidor de
-e-mail no teste. Se servir, troco o resultado observável para a mensagem na fila.
-
-spec OK?
+e-mail no teste. O resultado observável poderia ser a mensagem na fila.
 ````
+
+**As decisões vão no seletor**, como no PASSO 3: a mensagem relata, o seletor coleta. Uma
+pergunta por decisão assumida, com o valor gravado na primeira opção; uma pela convenção
+herdada, cuja resposta vale para as próximas specs; uma pelo resultado observável caro,
+quando houver. Aviso e "ficou de fora" não entram — o primeiro não se decide aqui, o
+segundo já foi decidido no PASSO 3.
+
+Passando de quatro perguntas, vão as decisões assumidas e o resto fica só na mensagem. Não
+havendo nenhuma, o seletor pergunta só se a spec está certa.
 
 **Só o detectado.** Rótulo em negrito parece seção obrigatória, e seção que aparece sempre
 — às vezes só para dizer que não há nada — ensina o usuário a pular a parte de baixo
