@@ -6,7 +6,7 @@ description: >
   Use quando o usuário disser "especifica X", "o que essa feature precisa fazer", "escreve
   a spec de X", ou invocar /my-spec:spec. Não use para decidir arquitetura, para cortar o
   trabalho em passos, nem para escrever código.
-argument-hint: "[<ideia | feature>]"
+argument-hint: "[<ideia | feature>] [--assume]"
 ---
 
 # spec — o que o sistema faz, em exemplos
@@ -14,6 +14,11 @@ argument-hint: "[<ideia | feature>]"
 Esqueleto do artefato: `TEMPLATE.md`, ao lado. Copie e preencha.
 
 Você escreve **`spec.md` e nada mais**.
+
+**`--assume` no pedido tira as duas paradas.** Você não pergunta nada: em cada bifurcação
+escolhe o valor mais provável, grava em `Assumido` e leva para o relato final, que passa a
+ser a primeira vez que o usuário vê a lista de comportamentos. Sem o parâmetro, os PASSOS 3
+e 5 param e repetem até as decisões acabarem.
 
 `spec.md` é permanente: teste e código citam id daqui, e a citação continua valendo depois
 que a feature fecha. Por isso ele não fala de desenho — camada, biblioteca, quem gera o
@@ -26,9 +31,9 @@ a spec não pode mudar junto.
    usuário já disse na conversa; não peça para ele repetir.
 2. **Convenções do projeto** — `CLAUDE.md` ou arquivo de convenções. Não havendo, tire do
    repositório: idioma, formato das respostas de erro, o que o sistema já faz em situação
-   parecida. Num projeto vazio não há o que herdar — escolha, e diga na saída que escolheu.
-   É a primeira feature que fixa a convenção para todas as próximas, e isso o usuário
-   confirma agora, não descobre seis features depois.
+   parecida. Num projeto vazio não há o que herdar — escolha, registre em `Assumido` e leve
+   para a saída. É a primeira feature que fixa a convenção para todas as próximas, e isso o
+   usuário confirma agora, não descobre seis features depois.
 3. **Specs vizinhas e o repositório** — para saber o que já existe. Comportamento já
    especificado em outro lugar, ou que já funciona e ninguém vai mexer, não é reescrito
    aqui: a spec é da feature, não do sistema inteiro.
@@ -93,6 +98,15 @@ Pergunta escrita em prosa é respondida em prosa, quando é respondida; e você 
 seguir escrevendo o arquivo como se tivesse sido. Com o seletor não há como continuar
 sem a resposta.
 
+**Repita mensagem e seletor até não sobrar decisão.** Resposta que muda a lista devolve a
+tabela corrigida, com os avisos ajustados ao que ficou, e um seletor novo; havendo mais de
+quatro decisões, as outras vêm na rodada seguinte. Você sai do PASSO 3 com a lista
+confirmada e nada pendente.
+
+Rodada nova só existe se a anterior deixou pendência ou se a resposta abriu uma. **Não
+levante decisão para ter o que perguntar** — o loop termina quando as decisões acabam, e
+elas acabam.
+
 **Lista longa se divide em specs, nunca pela metade.** Vinte comportamentos quase sempre
 querem dizer que ali tem mais de uma feature: um CRUD de pessoa é cadastro, consulta e
 remoção, e cada um vira sua pasta com sua spec inteira. Diga onde a divisão cai e pergunte;
@@ -101,7 +115,8 @@ spec — o que ficasse de fora não estaria especificado em lugar nenhum, e esco
 entra no primeiro incremento é trabalho do `tasks`, não daqui.
 
 **Pare aqui, e só aqui.** Acertar a lista custa uma linha por item; errá-la custa quinze
-cenários jogados fora.
+cenários jogados fora. Com `--assume`, nem a mensagem deste passo existe: siga para o
+PASSO 4 e deixe a lista aparecer no relato final.
 
 ## PASSO 4 — PREENCHER O TEMPLATE
 
@@ -150,6 +165,11 @@ não existe —, use o valor mais provável, registre em `Assumido` embaixo do c
 que o usou, e leve a mesma linha para a saída. Sem isso, uma decisão de produto entra no
 sistema sem ninguém ter decidido nada.
 
+**Convenção que você escolheu por não haver o que herdar entra aqui**, no primeiro
+comportamento que a usou — repetida em cada um vira ruído. Convenção herdada do
+repositório não entra: ela tem dono fora da spec e muda sem que a feature mude, e a spec
+não pode mudar junto.
+
 O registro entra mesmo quando o cenário já mostra o valor: o cenário diz o que acontece, o
 campo diz que ninguém escolheu. Lista comprida é sinal, não sujeira — não junte nem resuma
 para o campo ficar curto. E não registre o que a feature deixou de fora: "o convite não tem
@@ -193,8 +213,17 @@ herdada, cuja resposta vale para as próximas specs; uma pelo resultado observá
 quando houver. Aviso e "ficou de fora" não entram — o primeiro não se decide aqui, o
 segundo já foi decidido no PASSO 3.
 
-Passando de quatro perguntas, vão as decisões assumidas e o resto fica só na mensagem. Não
-havendo nenhuma, o seletor pergunta só se a spec está certa.
+**Repita até não sobrar decisão**, como no PASSO 3, e aqui cada resposta muda o arquivo:
+grave a mudança, reemita o relato acima já ajustado — contagem, assumidos, o que ficou caro
+— e abra o seletor de novo com o que sobrou. Passando de quatro perguntas, vão as decisões
+assumidas primeiro e as outras vêm na rodada seguinte.
+
+Não sobrando nenhuma, o seletor pergunta só se a spec está certa. É a última rodada sempre,
+e a única quando não houve decisão alguma.
+
+Com `--assume` não há seletor nenhum: a mensagem acima é a saída inteira, e as decisões
+que ela lista já estão no arquivo. Diga na primeira linha que rodou assim — o usuário
+precisa saber que ninguém confirmou nada.
 
 **Só o detectado.** Rótulo em negrito parece seção obrigatória, e seção que aparece sempre
 — às vezes só para dizer que não há nada — ensina o usuário a pular a parte de baixo
