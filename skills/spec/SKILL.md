@@ -6,7 +6,7 @@ description: >
   Use quando o usuário disser "especifica X", "o que essa feature precisa fazer", "escreve
   a spec de X", ou invocar /my-spec:spec. Não use para decidir arquitetura, para cortar o
   trabalho em passos, nem para escrever código.
-argument-hint: "[<ideia | feature>] [--assume]"
+argument-hint: "[--assume] [<idea | feature>]"
 ---
 
 # spec — o que o sistema faz, em exemplos
