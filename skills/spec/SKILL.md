@@ -159,10 +159,15 @@ prosa, quando é respondida; e você tende a seguir escrevendo o arquivo como se
 sido.
 
 **A lista sai inteira toda volta; o seletor é um recorte dela.** Item que não virou pergunta
-continua escrito — é assim que ele atravessa as voltas sem depender de você lembrar dele. Um
-item fica de fora do seletor por dois motivos: **a confirmação, enquanto houver outro item**,
-porque perguntada junto ela aprova uma lista que muda na mesma volta; e o que passou de
-quatro, que vem na volta seguinte.
+continua escrito — é assim que ele atravessa as voltas sem depender de você lembrar dele. O
+que passou de quatro vem na volta seguinte.
+
+**`a lista está certa?` nunca divide seletor com outra pergunta.** Ela é uma chamada de
+`AskUserQuestion` sozinha, com uma pergunta só, e acontece quando não sobrou mais nada em
+aberto. Você tende a economizar a volta e mandar tudo de uma vez, e aí o usuário aprova a
+lista na mesma resposta em que pede para mudá-la: a confirmação dele foi dada antes de ver
+o que a própria resposta mudou. Duas chamadas seguidas custam uma volta; uma lista aprovada
+sem ninguém ter visto ela pronta custa o passo inteiro.
 
 **A pergunta de cada volta é "este item já foi respondido?", nunca "eu ainda tenho dúvida
 sobre ele?".** Dúvida é julgamento seu, e julgamento seu não segura ciclo: basta você não
@@ -179,16 +184,19 @@ volta que se repete igual.
 ```mermaid
 stateDiagram-v2
     state "a mensagem acima, com a tabela e a<br>lista Em aberto como estão agora" as M
-    state "AskUserQuestion, uma por item em aberto" as S
+    state "AskUserQuestion com os itens em aberto,<br>até quatro" as S
+    state "AskUserQuestion sozinha:<br>a lista está certa?" as C
     [*] --> M: os behaviors do PASSO 2
-    M --> S
+    M --> S: sobrou outro item além da confirmação
     S --> M: aplique as respostas e risque os itens
-    S --> [*]: Em aberto vazio
+    M --> C: a confirmação é o único item
+    C --> M: o usuário ajustou a lista
+    C --> [*]: confirmou
 ```
 
-**Você sai do ciclo pela lista `Em aberto` vazia, e por mais nada.** Você tende a tratar a
-primeira chamada como a regra cumprida e seguir para o PASSO 4 — e aí a lista corrigida
-nunca chega a ser vista por quem pediu a correção.
+**A única saída do ciclo é a confirmação**, e ela só é perguntada quando não há mais nada em
+aberto. Você tende a tratar a primeira chamada como a regra cumprida e seguir para o PASSO
+4 — e aí a lista corrigida nunca chega a ser vista por quem pediu a correção.
 
 **Não levante decisão para ter o que perguntar**: item novo só entra se a resposta abriu um.
 Sem isso a lista nunca esvazia.
