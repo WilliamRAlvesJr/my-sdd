@@ -121,26 +121,31 @@ Uma linha por `behavior`, sem `scenario` nenhum:
 ````markdown
 ## criar convite — 5 behaviors
 
-| ? | id | behavior |
-|---|----|----------|
-|   | `B1` | criar um convite para um endereço de e-mail |
-|   | `B2` | recusar e-mail malformado |
-|   | `B3` | aceitar um convite pelo código |
-|   | `B4` | recusar código que não existe |
-| ? | `B5` | listar os convites de quem enviou — ou isso já é a spec de listagem? |
-| ? | — | expiração e revogação parecem vir junto, mas não estavam no pedido |
-| ? | — | a lista está certa? |
+| id | behavior |
+|----|----------|
+| `B1` | criar um convite para um endereço de e-mail |
+| `B2` | recusar e-mail malformado |
+| `B3` | aceitar um convite pelo código |
+| `B4` | recusar código que não existe |
+| `B5` | listar os convites de quem enviou |
 
 **Aviso** — uma dependência de autenticação já está no projeto e responde 401 a toda
 requisição. Enquanto continuar assim, nenhum behavior acima pode ser verificado.
+
+**Em aberto**
+
+1. `B5` já é a spec de listagem que existe?
+2. expiração e revogação não estavam no pedido — entram?
+3. a lista está certa?
 ````
 
-**A coluna `?` é o estado do ciclo, e a tabela é onde ele mora.** Linha marcada é pergunta
-aberta; linha limpa já foi decidida. Dúvida sobre um `behavior` marca a linha dele; dúvida
-que não é de nenhum — o que ficou de fora, dividir em `specs` — entra como linha sem id. **A
-confirmação da lista é uma linha como as outras**, e é a última a sair.
+**A tabela é a lista que o usuário revisa; `Em aberto` é o estado do ciclo.** Item na lista é
+pergunta que o usuário ainda não respondeu, e lista vazia é o fim do passo. Pergunta sobre
+um `behavior` cita o id dele; pergunta sobre o conjunto — o que fica de fora, dividir em
+`specs` — não cita nenhum. **`a lista está certa?` nasce junto com a lista e é o último item
+a sair.**
 
-**Marque o que muda a tabela, e nada mais.** As dúvidas daqui são quatro, e todas se
+**Pergunte o que muda a tabela, e nada mais.** As dúvidas daqui são quatro, e todas se
 respondem mexendo em linha: entra ou fica de fora, é uma decisão ou duas, isto já existe em
 outro lugar, é uma feature ou são duas `specs`. Dúvida que muda o texto de um `Then` — o
 código do erro, a ordem da listagem, o limite de um campo — não é daqui: ela vira `Assumido`
@@ -148,41 +153,45 @@ no PASSO 4, e quem pergunta é o `clarify`. Você tende a resolver tudo de uma v
 usuário está ali, e aí ele decide o produto inteiro antes de ter visto um `scenario`.
 
 **A pergunta vai no seletor de opções, não no texto** — uma chamada de `AskUserQuestion`
-logo depois da mensagem, uma pergunta por linha marcada. A tabela e o aviso ficam onde
-estão, porque não cabem em rótulo de opção. **A confirmação da lista fica de fora enquanto
-houver outra marca**: perguntada junto, ela aprova uma lista que muda na mesma volta. Pergunta escrita em prosa é respondida em
+logo depois da mensagem, uma pergunta por item em aberto. A tabela e o aviso ficam onde
+estão, porque não cabem em rótulo de opção. Pergunta escrita em prosa é respondida em
 prosa, quando é respondida; e você tende a seguir escrevendo o arquivo como se tivesse
 sido.
 
-**A pergunta de cada volta é "o usuário respondeu esta linha?", nunca "eu ainda tenho
-dúvida sobre ela?".** Dúvida é julgamento seu, e julgamento seu não segura ciclo: basta
-você não sentir dúvida nenhuma para a tabela sair limpa na primeira volta, com uma lista
-que ninguém aprovou. As outras marcas são o que você percebeu; **a linha da confirmação é a
-que não depende de perceber** — ela nasce marcada e só o usuário a limpa.
+**A lista sai inteira toda volta; o seletor é um recorte dela.** Item que não virou pergunta
+continua escrito — é assim que ele atravessa as voltas sem depender de você lembrar dele. Um
+item fica de fora do seletor por dois motivos: **a confirmação, enquanto houver outro item**,
+porque perguntada junto ela aprova uma lista que muda na mesma volta; e o que passou de
+quatro, que vem na volta seguinte.
 
-**Aplicada a resposta, a marca sai** — e a linha sem id sai inteira, porque o que ela
-perguntava virou `behavior` da lista ou ficou de fora. Marca que sobrevive à própria
-resposta é volta que se repete igual.
+**A pergunta de cada volta é "este item já foi respondido?", nunca "eu ainda tenho dúvida
+sobre ele?".** Dúvida é julgamento seu, e julgamento seu não segura ciclo: basta você não
+sentir dúvida nenhuma para a lista nascer vazia, e o passo acaba com uma tabela que ninguém
+aprovou. Os outros itens são o que você percebeu; **o da confirmação é o que não depende de
+perceber** — ele nasce na lista e só o usuário o tira.
+
+**Respondido, o item sai da lista.** O que ficou de fora não vira linha da tabela e some
+daqui, mas você o guarda para o relato do PASSO 5. Item que sobrevive à própria resposta é
+volta que se repete igual.
 
 **O passo é um ciclo, não uma pergunta:**
 
 ```mermaid
 stateDiagram-v2
-    state "a mensagem acima, com a tabela<br>como está agora" as L
-    state "AskUserQuestion, uma por linha marcada" as S
-    [*] --> L: os behaviors do PASSO 2
-    L --> S
-    S --> L: aplique as respostas e limpe as marcas
-    S --> [*]: nenhum ? na tabela
+    state "a mensagem acima, com a tabela e a<br>lista Em aberto como estão agora" as M
+    state "AskUserQuestion, uma por item em aberto" as S
+    [*] --> M: os behaviors do PASSO 2
+    M --> S
+    S --> M: aplique as respostas e risque os itens
+    S --> [*]: Em aberto vazio
 ```
 
-**Você sai do ciclo pela tabela sem nenhum `?`, e por mais nada.** Havendo mais de quatro
-marcas, as outras vêm na volta seguinte. Você tende a tratar a primeira chamada como a
-regra cumprida e seguir para o PASSO 4 — e aí a lista corrigida nunca chega a ser vista por
-quem pediu a correção.
+**Você sai do ciclo pela lista `Em aberto` vazia, e por mais nada.** Você tende a tratar a
+primeira chamada como a regra cumprida e seguir para o PASSO 4 — e aí a lista corrigida
+nunca chega a ser vista por quem pediu a correção.
 
-**Não levante decisão para ter o que perguntar**: marca nova só entra se a resposta abriu
-uma. Sem isso a tabela nunca fica limpa.
+**Não levante decisão para ter o que perguntar**: item novo só entra se a resposta abriu um.
+Sem isso a lista nunca esvazia.
 
 **Lista longa se divide em `specs`, nunca pela metade.** Vinte `behaviors` quase sempre
 querem dizer que ali tem mais de uma feature: um CRUD de pessoa é cadastro, consulta e
