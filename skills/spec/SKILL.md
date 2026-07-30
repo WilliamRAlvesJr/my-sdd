@@ -88,7 +88,29 @@ contorno fica para sempre num arquivo que os testes citam.
 ## PASSO 2 — LEVANTAR OS BEHAVIORS
 
 Serve como `behavior` o que alguém provoca e observa: sem ação e sem resultado à vista,
-não há o que conferir.
+não há o que conferir. O teste é quem enxerga a diferença — se só quem mexe no repositório
+enxerga, não é `behavior`.
+
+**Lista vazia não vira `spec`, e o passo acaba aqui.** Entrar uma pasta no `.gitignore`,
+trocar a versão de uma dependência, formatar o código, renomear um arquivo — nada disso é
+provocado nem observado por quem usa o sistema, e o pedido inteiro pode ser assim:
+
+````markdown
+Nenhum behavior — não há spec para escrever.
+
+Entrar `Temp/` no `.gitignore` muda o repositório, não o produto: ninguém que usa o sistema
+provoca isso, e a diferença só aparece para quem trabalha aqui dentro. O scenario possível
+terminaria em `Then Temp não aparece no git status`, que verifica o comando, não a
+aplicação.
+
+É trabalho direto, e não passa por aqui.
+````
+
+Nenhuma pergunta, nenhum arquivo, e nenhuma chamada ao `clarify` — não há `spec` para
+aprovar. Se parte do pedido tinha produto e parte não, escreva a `spec` do que tinha e
+relate o resto na mesma frase. Chamado, você tende a entregar o artefato que o nome do
+comando promete, e aí um `Scenario` de `git status` entra num arquivo permanente que os
+testes vão citar.
 
 **Um id por decisão, não por ação.** Recusar nome inválido ao criar e ao renomear é a mesma
 decisão em dois lugares: um id, dois `scenarios`. A ação diferente é o que salta aos olhos,
