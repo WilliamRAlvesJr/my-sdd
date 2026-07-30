@@ -121,50 +121,68 @@ Uma linha por `behavior`, sem `scenario` nenhum:
 ````markdown
 ## criar convite — 5 behaviors
 
-| id | behavior |
-|----|----------|
-| `B1` | criar um convite para um endereço de e-mail |
-| `B2` | recusar e-mail malformado |
-| `B3` | aceitar um convite pelo código |
-| `B4` | recusar código que não existe |
-| `B5` | listar os convites de quem enviou |
+| ? | id | behavior |
+|---|----|----------|
+|   | `B1` | criar um convite para um endereço de e-mail |
+|   | `B2` | recusar e-mail malformado |
+|   | `B3` | aceitar um convite pelo código |
+|   | `B4` | recusar código que não existe |
+| ? | `B5` | listar os convites de quem enviou — ou isso já é a spec de listagem? |
+| ? | — | expiração e revogação parecem vir junto, mas não estavam no pedido |
+| ? | — | a lista está certa? |
 
 **Aviso** — uma dependência de autenticação já está no projeto e responde 401 a toda
 requisição. Enquanto continuar assim, nenhum behavior acima pode ser verificado.
-
-**Fora da lista** — expiração e revogação parecem vir junto, mas não estavam no pedido.
 ````
 
-**A pergunta vai no seletor de opções, não no texto** — uma chamada de `AskUserQuestion`
-logo depois da mensagem. A tabela e os avisos ficam onde estão, porque não cabem em rótulo
-de opção; no seletor vai só o que o usuário decide. Para a lista acima: *a lista está
-certa?* — confirmar, ajustar, dividir em `specs` — e *expiração e revogação?* — ficam de
-fora, entram nesta `spec`. Uma pergunta por decisão, no mesmo seletor, até quatro.
+**A coluna `?` é o estado do ciclo, e a tabela é onde ele mora.** Linha marcada é pergunta
+aberta; linha limpa já foi decidida. Dúvida sobre um `behavior` marca a linha dele; dúvida
+que não é de nenhum — o que ficou de fora, dividir em `specs` — entra como linha sem id. **A
+confirmação da lista é uma linha como as outras**, e é a última a sair.
 
-Pergunta escrita em prosa é respondida em prosa, quando é respondida; e você tende a
-seguir escrevendo o arquivo como se tivesse sido. Com o seletor não há como continuar
-sem a resposta.
+**Marque o que muda a tabela, e nada mais.** As dúvidas daqui são quatro, e todas se
+respondem mexendo em linha: entra ou fica de fora, é uma decisão ou duas, isto já existe em
+outro lugar, é uma feature ou são duas `specs`. Dúvida que muda o texto de um `Then` — o
+código do erro, a ordem da listagem, o limite de um campo — não é daqui: ela vira `Assumido`
+no PASSO 4, e quem pergunta é o `clarify`. Você tende a resolver tudo de uma vez enquanto o
+usuário está ali, e aí ele decide o produto inteiro antes de ter visto um `scenario`.
+
+**A pergunta vai no seletor de opções, não no texto** — uma chamada de `AskUserQuestion`
+logo depois da mensagem, uma pergunta por linha marcada. A tabela e o aviso ficam onde
+estão, porque não cabem em rótulo de opção. **A confirmação da lista fica de fora enquanto
+houver outra marca**: perguntada junto, ela aprova uma lista que muda na mesma volta. Pergunta escrita em prosa é respondida em
+prosa, quando é respondida; e você tende a seguir escrevendo o arquivo como se tivesse
+sido.
+
+**A pergunta de cada volta é "o usuário respondeu esta linha?", nunca "eu ainda tenho
+dúvida sobre ela?".** Dúvida é julgamento seu, e julgamento seu não segura ciclo: basta
+você não sentir dúvida nenhuma para a tabela sair limpa na primeira volta, com uma lista
+que ninguém aprovou. As outras marcas são o que você percebeu; **a linha da confirmação é a
+que não depende de perceber** — ela nasce marcada e só o usuário a limpa.
+
+**Aplicada a resposta, a marca sai** — e a linha sem id sai inteira, porque o que ela
+perguntava virou `behavior` da lista ou ficou de fora. Marca que sobrevive à própria
+resposta é volta que se repete igual.
 
 **O passo é um ciclo, não uma pergunta:**
 
 ```mermaid
 stateDiagram-v2
-    state "a mensagem acima, com a lista como está agora<br>e os avisos ajustados ao que ficou" as L
-    state "AskUserQuestion, até quatro perguntas" as S
+    state "a mensagem acima, com a tabela<br>como está agora" as L
+    state "AskUserQuestion, uma por linha marcada" as S
     [*] --> L: os behaviors do PASSO 2
     L --> S
-    S --> L: aplique as respostas à lista
-    S --> [*]: confirmou a lista, e nada ficou pendente
+    S --> L: aplique as respostas e limpe as marcas
+    S --> [*]: nenhum ? na tabela
 ```
 
-**A seta que sai do ciclo é uma só**, e é a resposta que confirma a lista sem deixar
-pendência. Havendo mais de quatro decisões, as outras vêm na volta seguinte. Você tende a
-tratar a primeira chamada como a regra cumprida e seguir para o PASSO 4 — e aí a lista
-corrigida nunca chega a ser vista por quem pediu a correção.
+**Você sai do ciclo pela tabela sem nenhum `?`, e por mais nada.** Havendo mais de quatro
+marcas, as outras vêm na volta seguinte. Você tende a tratar a primeira chamada como a
+regra cumprida e seguir para o PASSO 4 — e aí a lista corrigida nunca chega a ser vista por
+quem pediu a correção.
 
-Volta nova só existe se a anterior deixou pendência ou se a resposta abriu uma. **Não
-levante decisão para ter o que perguntar** — as decisões acabam, e a última pergunta é a
-confirmação da lista.
+**Não levante decisão para ter o que perguntar**: marca nova só entra se a resposta abriu
+uma. Sem isso a tabela nunca fica limpa.
 
 **Lista longa se divide em `specs`, nunca pela metade.** Vinte `behaviors` quase sempre
 querem dizer que ali tem mais de uma feature: um CRUD de pessoa é cadastro, consulta e
@@ -238,9 +256,12 @@ aqui é a primeira aparição dela no sistema.
 
 ### Ids
 
-`B1`, `B2`… na ordem em que aparecem no arquivo. **O número não é reaproveitado:**
-`behavior` removido deixa o id vago, porque algum teste pode citar aquele número — e o
-novo entra com o próximo id livre, mesmo que o lugar dele seja no meio do arquivo.
+`B1`, `B2`… na ordem em que aparecem no arquivo. **O número congela aqui, não no PASSO 3**
+— a tabela renumera à vontade, porque ali nada cita id nenhum ainda.
+
+Escrito o arquivo, **o número não é reaproveitado:** `behavior` removido deixa o id vago,
+porque algum teste pode citar aquele número — e o novo entra com o próximo id livre, mesmo
+que o lugar dele seja no meio do arquivo.
 
 ## PASSO 5 — RELATAR
 
