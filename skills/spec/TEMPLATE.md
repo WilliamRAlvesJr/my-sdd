@@ -2,31 +2,31 @@
 
 [Resumo dizendo para que a feature existe.]
 
-## S1 · [comportamento, no imperativo]
+## B1 · [behavior, no imperativo]
 
 ```gherkin
-Cenário: [o caso]
-  Dado [o estado inicial]
-  Quando [a ação]
-  Então [o resultado, com o valor literal]
+Scenario: [o caso]
+  Given [o estado inicial]
+  When [a ação]
+  Then [o resultado, com o valor literal]
 
-Cenário: [outro caso do mesmo comportamento]
-  Quando [a ação]
-  Então [o resultado, com o valor literal]
-```
-
-## S2 · [comportamento, no imperativo]
-
-```gherkin
-Esquema do Cenário: [a regra]
-  Quando [a ação com <entrada>]
-  Então [o resultado com <resultado>]
-
-  Exemplos:
-    | entrada | resultado |
-    | [valor] | [valor]   |
-    | [valor] | [valor]   |
+Scenario: [outro caso do mesmo behavior]
+  When [a ação]
+  Then [o resultado, com o valor literal]
 ```
 
 - **Assumido** *(só quando houve suposição)*
   - [a decisão que ninguém tomou, numa linha]
+
+## B2 · [behavior, no imperativo]
+
+```gherkin
+Scenario Outline: [o caso]
+  When [a ação com <entrada>]
+  Then [o resultado com <resultado>]
+
+  Examples:
+    | entrada | resultado |
+    | [valor] | [valor]   |
+    | [valor] | [valor]   |
+```

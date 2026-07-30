@@ -1,5 +1,5 @@
 ---
-description: Escreve a spec da feature como cenários Gherkin que alguém confere olhando o sistema rodar. Propõe a lista de comportamentos, você confirma, então preenche spec.md.
+description: Escreve a spec da feature como scenarios Gherkin que alguém confere olhando o sistema rodar. Propõe a lista de behaviors, você confirma, então preenche spec.md.
 argument-hint: "[--assume] [<idea | feature>]"
 ---
 

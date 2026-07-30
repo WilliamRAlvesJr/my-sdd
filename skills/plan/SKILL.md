@@ -25,9 +25,9 @@ olhada, o tamanho do estrago.
 
 1. **O pedido** — o que veio no argumento da chamada. Vindo vazio, o pedido é o que o
    usuário já disse na conversa; não peça para ele repetir.
-2. **A spec da feature** — `specs/<feature>/spec.md`, quando existir. Os comportamentos
-   dizem o que precisa existir; o desenho é como. Não havendo spec, o desenho sai do pedido
-   e isso vira aviso na saída.
+2. **A `spec` da feature** — `specs/<feature>/spec.md`, quando existir. Os `behaviors`
+   dizem o que precisa existir; o desenho é como. Não havendo `spec`, o desenho sai do
+   pedido e isso vira aviso na saída.
 3. **O repositório** — os nomes reais do que já existe: a classe que vai mudar, a interface
    que ela já implementa, quem segura a referência. Desenho com nome inventado para classe
    que existe é pior que desenho nenhum, porque ninguém acha o arquivo.
@@ -167,5 +167,5 @@ Você sai pela resposta que confirma o desenho, com nada pendente, e por mais na
 
 - Não escrever código, migration, teste ou qualquer arquivo executável.
 - Não cortar o trabalho em passos: ordem e estado são de outro artefato.
-- Não repetir em prosa o comportamento que a spec já descreve.
+- Não repetir em prosa o `behavior` que a `spec` já descreve.
 - Não explicar conceito do stack.
