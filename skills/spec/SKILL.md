@@ -227,13 +227,27 @@ about one `behavior` names its id; a question about the whole thing — what sta
 splitting into `specs` — names none. **`is the list right?` shows up with the list and is the
 last item to leave it.**
 
-**Ask what changes the table, and nothing else.** Four questions belong here, and each one is
+**Ask what changes the table, and nothing else.** Five questions belong here, and each one is
 answered by editing a line: does it go in or stay out, is it one decision or two, does this
-already exist somewhere else, is this one `feature` or two `specs`. A question that changes
+already exist somewhere else, is this one `feature` or two `specs`, and the one below. A question that changes
 the wording of a `Then` — the error code, the order of a listing, a field's limit — doesn't
 belong here: it becomes `Assumed` in STEP 4, and `clarify` is what asks it. You tend to want
 everything settled while the user is right there, and then they decide the whole product
 before seeing a single `scenario`.
+
+**The fifth one: a `behavior` that presupposes a `feature` nobody has specified.** A CRUD for
+columns presupposes boards; if no `spec` covers boards and no code does either, ask whether
+boards come along — *columns presuppose boards, which no `spec` covers — do boards come in?*.
+Answered yes, it is a split, and this step already knows what to do with one. Answered no, it
+stops being a question and becomes a line in the STEP 5 report, with the user having decided
+knowing what it costs.
+
+**Don't ask when the dependency is already specified.** Somebody has decided it exists, and
+what is left is the order the work gets done, which is the `tasks` job. Don't ask either when
+the `feature` itself delivers it: `B3` needing what `B1` creates is the ordinary shape of a
+`spec`. And never turn any of it into a stop — specifying isn't building, the `spec.md` comes
+out correct either way, and the user is the one who knows whether that dependency is with
+somebody else, due next sprint, or already live in another system.
 
 **Questions go in the option selector, not in the text** — an `AskUserQuestion` call right
 after the message, one question per open item. The table and the warning stay where they are,
@@ -379,6 +393,13 @@ default.** In a backend it usually disappears, since the default is an empty dat
 game, `the enemy 10 meters from the player` is what decides whether what the person saw was
 what they should have seen.
 
+**A `Given` leaning on something that isn't built yet gets reported, never fixed here.** It
+becomes a line in the STEP 5 report saying which of the two it is: the `feature` has a `spec`
+and nobody built it, or nothing covers it at all. It doesn't become `Assumed` — no decision is
+pending there, and `clarify` would have nothing to ask; it doesn't become a `behavior`, for
+the same reason the obstacle doesn't; and it doesn't merge the two `features`, because that
+rule is about the `Then`, and here leaning on another `feature` is the normal case.
+
 A `behavior` with several inputs becomes a `Scenario Outline` with an `Examples` table.
 
 ### Assumed
@@ -435,6 +456,9 @@ repeats what was created.
 
 **Expensive to check** — `S1` ends with an e-mail delivered, which asks for an e-mail server
 in the test. It could stop at the message on the queue.
+
+**Can't be verified yet** — the `Given` in `S6` starts from a member already in the group,
+which `specs/convidar-membro/` covers and nobody has built.
 
 Run `/my-spec:clarify` to settle the 2 assumptions.
 ````
