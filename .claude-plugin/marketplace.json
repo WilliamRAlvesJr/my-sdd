@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "my-spec",
-      "description": "BDD conduzido pelo agente: spec → plan → tasks → build → check. A spec são cenários Gherkin, e cada um é verificado de ponta a ponta contra o sistema de verdade.",
+      "description": "BDD run by the agent: /my-spec:spec writes the feature's spec as Gherkin scenarios. Each scenario is verified end to end against the real system.",
       "source": "./",
       "category": "development"
     }

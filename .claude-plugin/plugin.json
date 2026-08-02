@@ -1,13 +1,13 @@
 {
   "name": "my-spec",
-  "description": "my-sdd — BDD conduzido pelo agente. A spec da feature são cenários Gherkin que uma pessoa confere olhando o sistema rodar, e cada um é verificado de ponta a ponta contra o sistema de verdade.",
+  "description": "BDD run by the agent. A feature's spec is Gherkin scenarios anyone can check by watching the system run, and each one is verified end to end against the real system.",
   "author": { "name": "William Alves" },
   "license": "MIT",
   "keywords": [
     "spec-driven",
     "sdd",
     "spec-anchored",
-    "triage",
-    "backprop"
+    "bdd",
+    "gherkin"
   ]
 }
