@@ -1,5 +1,5 @@
 ---
-description: Writes the feature's spec as Gherkin scenarios anyone can check by watching the system run. Proposes the list of behaviors, you confirm, then it fills in spec.md.
+description: Writes the spec of every feature in the request, as Gherkin scenarios anyone can check by watching the system run. Proposes the list of behaviors for you to confirm, then fills in one spec.md per feature.
 argument-hint: "[--assume] <request>"
 ---
 
