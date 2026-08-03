@@ -7,7 +7,7 @@ description: >
   Use when the user says "spec out X", "what does this feature have to do", "write the spec
   for X", or invokes /my-spec:spec. Do not use to decide architecture, to break the work
   into steps, or to write code.
-argument-hint: "[--assume] <request>"
+argument-hint: "[--assume] [--verbose] <request>"
 ---
 
 # spec: what the system does, in examples
@@ -72,9 +72,44 @@ comes right before the stop message: it is what says which of the checks the run
 as an artifact (`spec.md` is still the only one you write) and to grow the line into a
 section of the report. STEP 5 says what the file holds; the trace says where you were.
 
-**R9 · The `▸`, `▪` and `◂` lines go in the conversation and never in `spec.md`.** You tend to
-work in silence and hand over the finished artifact, and then a run that stopped halfway looks
-exactly like one that went through all five steps.
+**R9 · The `▸`, `▪`, `↳` and `◂` lines go in the conversation and never in `spec.md`.** You tend
+to work in silence and hand over the finished artifact, and then a run that stopped halfway
+looks exactly like one that went through all five steps.
+
+**R64 · `--verbose` in the request makes the rule that decided in silence announce itself**,
+with `↳`, between the step's `▸` and its `◂`, one line per decision carrying the id and what it
+decided:
+
+```
+▸ STEP 2: WORK OUT THE BEHAVIORS · the list, from what STEP 1 read
+↳ R22 · rejecting an invalid name on create and on rename: one id, two scenarios
+↳ R24 · expiration and revoking stopped where the request stopped, left out
+◂ STEP 2 · 5 behaviors
+```
+
+The flag narrates and decides nothing: a run with it and a run without it hand over the same
+`spec.md`, ask the same questions and stop at the same places. You tend to read a flag asking
+for detail as a flag asking for care, and then the same request specifies a different product
+depending on how it was typed.
+
+**R65 · A rule that leaves its trace somewhere else doesn't announce itself.** `R31` is an
+`AskUserQuestion` call sitting in the conversation, `R41` is in the file, `R16` is a command
+nobody ran: citing them buys the reader nothing and buries the lines that are worth something.
+What announces itself is the decision whose only result is a line that isn't there: an id you
+didn't open (`R22`), a `behavior` you kept out (`R24`, `R63`), a question you didn't ask
+(`R28`), a convention that became `Assumed` because there was none to inherit (`R54`). And
+only what you decided in this run: a rule you read and moved past has nothing to report. You
+tend to cite the structural rule, which is the easy one to name, and then the run reports five
+rules the user could have checked without you.
+
+**R66 · Without `--verbose` no rule id shows up anywhere**: not in the trace, not in the STEP 3
+message, not in the report, not in a stop, not in an answer you give along the way. And not
+the paraphrase either, *the rule says expiration stays out* being the same citation with the
+number filed off. The user asked for the `spec` of a `feature` and has never read this file:
+`R24` points at nothing they can open, and it reads like the system explaining itself instead
+of handing over what was asked. Say the decision on its own, the way the STEP 5 report already
+does: *expiration and revoking weren't in the request*. With the flag the ids live on the `↳`
+lines and nowhere else.
 
 ## Glossary
 
@@ -146,10 +181,10 @@ file. Writing the request out costs the user one line and is them signing it. Yo
 reusing what was just said as being helpful, and what it actually does is specify a `feature`
 nobody asked for in those words.
 
-**R11 · A `--flag` you don't recognize ends the call the same way**, saying which one exists.
-`--assume` is the only one. A typo in it (`--asume`) would otherwise ride along as part of
-the request and stop at STEP 3, which is the opposite of what was asked, with nothing said
-about why.
+**R11 · A `--flag` you don't recognize ends the call the same way**, saying which ones exist.
+There are two, `--assume` and `--verbose`, and one call takes both. A typo in either
+(`--asume`) would otherwise ride along as part of the request and stop at STEP 3, which is the
+opposite of what was asked, with nothing said about why.
 
 The four readings, in this order:
 
