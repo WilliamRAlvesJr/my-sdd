@@ -43,16 +43,13 @@ A flag that reads like permission to go ahead is the one you most want to run th
 
 ## The trace
 
-A run, read from the outside:
+The four marks, and what fills each line:
 
 ```
-▸ STEP 1: READ · conventions, the other specs and the repository
-◂ STEP 1 · no spec.md for it, 201 with Location is the convention, auth answers 401
-▸ STEP 3: PROPOSE · 5 behaviors on the table
-▪ STEP 3 · round 1 · 3 open items
-▪ STEP 3 · round 2 · the confirmation on its own
-◂ STEP 3 · 5 behaviors confirmed, specs/create-invite/
-▸ STEP 4: TEMPLATE · writing specs/create-invite/spec.md
+▸ STEP [n]: [STEP NAME] · [what this pass is about to do]
+↳ [Rn] · [what the rule decided]
+▪ STEP [n] · round [n] · [what is still open]
+◂ STEP [n] · [the Out, filled in, or the stop]
 ```
 
 **R5 · trace · Every step has an `In` and an `Out`, in the two lines under its heading, and
@@ -60,6 +57,13 @@ you announce both in the conversation**, one line going in, one coming out. `▸
 with what it is about to do, and `◂` closes it with its `Out`, filled in with what actually
 came out. You tend to work in silence and hand over the finished artifact, and then a run that
 stopped halfway looks exactly like one that went through all five steps.
+
+**R69 · trace · Everything up to the `·` is literal**: the mark, the word `STEP`, the number
+and, on the `▸`, the step's name spelled exactly as its own heading spells it. What comes
+after the `·` is in the language of the conversation, the same split R45 makes inside a
+`scenario`. You tend to copy the skeleton's line whole, placeholder and language along with
+it, and then one step announces itself under two names across two runs and the user reads a
+step opening in a language they didn't write in.
 
 **R6 · trace · A step that is a cycle emits one `▪` per round, numbered, between its `▸` and
 its `◂`.** The step is entered once and left once, however many rounds it takes: a `▸` per
@@ -87,7 +91,7 @@ and what it decided:
 ▸ STEP 2: WORK OUT THE BEHAVIORS · the list, from what STEP 1 read
 ↳ R22 · rejecting an invalid name on create and on rename: one id, two scenarios
 ◂ STEP 2 · 5 behaviors
-▸ STEP 3: PROPOSE · 5 behaviors on the table
+▸ STEP 3: PROPOSE AND STOP · 5 behaviors on the table
 ↳ R28 · B3 leans on what B1 creates, and this spec delivers both: not asked
 ```
 
@@ -637,6 +641,9 @@ it means editing one line of the `Then`):
 **Followed the repository's convention**: creating answers 201 with `Location`, and the body
 repeats what was created.
 
+**Chose the convention here**: the project had nothing on the shape of an error body, so this
+spec is the first to set one, and every feature after it inherits what gets confirmed.
+
 **Left out**: expiration and revoking, which weren't in the request.
 
 **Expensive to check**: `S1` ends with an e-mail delivered, which asks for an e-mail server
@@ -662,4 +669,6 @@ confirmation.
 
 **R62 · Only what you actually found.** A bold label looks like a mandatory section, and a
 section that shows up every time, sometimes only to say there's nothing, teaches the user to
-skip the whole bottom half. Give the count without passing judgment on it.
+skip the whole bottom half. Give the count without passing judgment on it. **The labels are
+the ones the example carries and you don't coin another**: a finding none of them fits is a
+sentence, not a heading you invent.
