@@ -43,7 +43,7 @@ A flag that reads like permission to go ahead is the one you most want to run th
 
 ## The trace
 
-The four marks, and what fills each line:
+What a step emits, from the line that opens it to the line that closes it:
 
 ```
 ▸ STEP [n]: [STEP NAME] · [what this pass is about to do]
@@ -670,5 +670,6 @@ confirmation.
 **R62 · Only what you actually found.** A bold label looks like a mandatory section, and a
 section that shows up every time, sometimes only to say there's nothing, teaches the user to
 skip the whole bottom half. Give the count without passing judgment on it. **The labels are
-the ones the example carries and you don't coin another**: a finding none of them fits is a
-sentence, not a heading you invent.
+the ones the example carries and you don't coin another**, written in the language of the
+conversation like everything else in the message: a finding none of them fits is a sentence,
+not a heading you invent.
