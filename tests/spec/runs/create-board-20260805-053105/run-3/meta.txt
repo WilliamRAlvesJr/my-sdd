@@ -1,0 +1,9 @@
+exit_code: 
+is_error: False
+stop_reason: end_turn
+num_turns: 12
+duration_ms: 170317
+total_cost_usd: 0.856529
+permission_denied: 0
+session_id: 3ad79b40-6de8-45b3-855f-9d88ed7f66c7
+files_written: specs\create-board\spec.md
