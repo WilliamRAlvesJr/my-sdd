@@ -18,29 +18,32 @@ Every rule here carries an id, `R1`, `R2`, permanent and never reused. It is wha
 cites and what makes coverage arithmetic instead of a reread. The glossary has none: it
 defines, it doesn't order.
 
-**R1 · The only artifact you write is `spec.md`**, one per `feature`, and nothing else. No
-plan, no task list, no code.
+The word after the id says where the rule leaves its mark, which is where a case has to look
+to see whether it was followed: `artifact` in what gets written to disk, `run` in whether the
+run ends early and in how many files come out, `dialogue` in what the user is shown and
+asked, `trace` in the `▸ ▪ ↳ ◂` lines and nowhere else.
 
-**R2 · Missing decisions don't get settled in the `spec`.** They go under `Assumed`, and
-the one that stops at each of them is `/my-spec:clarify`, later.
+**R1 · artifact · The only artifact you write is `spec.md`**, one per `feature`, and nothing
+else. No plan, no task list, no code.
 
-**R3 · `--assume` in the request drops the questions in STEP 3.** At every fork you take the
-most likely value, put it under `Assumed` and carry it to the final report, which then
-becomes the first time the user sees the list of `behaviors`. The split goes the same way: you
-settle the cut on your own, write every `spec` it produces, and the report says the cut was
-assumed too. A `feature` the request presupposes and nobody specified doesn't become one of
-them: it stays what it is everywhere else, a line in the report.
+**R2 · artifact · Missing decisions don't get settled in the `spec`.** They go under
+`Assumed`, and the one that stops at each of them is `/my-spec:clarify`, later.
 
-**R4 · `--assume` drops a question, never an end of work.** An empty call, a `spec.md`
-already written and an empty list of `behaviors` all finish exactly the same with the flag as
-without it:
-there is no fork at any of them, and nothing to assume. A flag that reads like permission to
-go ahead is the one you most want to run those with.
+**R3 · dialogue · `--assume` in the request drops the STEP 3 message**: no table, no
+questions, no confirmation. Every fork you would have asked about you settle on your own, the
+cut into more than one `spec` among them, and a value nobody chose goes where R53 already puts
+it. The one fork you don't settle is a `feature` the request presupposes and nobody specified:
+it doesn't become a `spec` of its own, it stays a line in the report.
+
+**R4 · run · `--assume` drops a question, never an end of work.** An empty call, a request that
+names no subject, a `spec.md` already written and an empty list of `behaviors` all finish
+exactly the same with the flag as without it: there is no fork at any of them, and nothing to
+assume. Assuming what `crud` is a crud of invents the whole product, not a value in a `Then`.
+A flag that reads like permission to go ahead is the one you most want to run those with.
 
 ## The trace
 
-**R5 · Every step declares what it takes in and what it hands over**, in the two lines under
-its heading, and **announces both in the conversation**, one line going in, one coming out:
+A run, read from the outside:
 
 ```
 ▸ STEP 1: READ · conventions, the other specs and the repository
@@ -52,39 +55,40 @@ its heading, and **announces both in the conversation**, one line going in, one 
 ▸ STEP 4: TEMPLATE · writing specs/create-invite/spec.md
 ```
 
-`In` is what the step is handed; `Out` is what it hands over. They are the step's
-contract and never the artifact's (`spec.md` has no such field), and a step whose `Out` is a
-stop has met it just the same.
+**R5 · trace · Every step has an `In` and an `Out`, in the two lines under its heading, and
+you announce both in the conversation**, one line going in, one coming out. `▸` opens the step
+with what it is about to do, and `◂` closes it with its `Out`, filled in with what actually
+came out. You tend to work in silence and hand over the finished artifact, and then a run that
+stopped halfway looks exactly like one that went through all five steps.
 
-`▸` opens the step with what it is about to do, and `◂` closes it with its `Out`, filled in
-with what actually came out. Between them, `▪` is one round of a cycle.
+**R6 · trace · A step that is a cycle emits one `▪` per round, numbered, between its `▸` and
+its `◂`.** The step is entered once and left once, however many rounds it takes: a `▸` per
+round would make a cycle indistinguishable from four steps in a row. Leaving STEP 3 on the
+first round is the defect that costs the most here, and counting the `▪` is what makes it
+visible from the outside.
 
-**R6 · A step that is a cycle emits one `▪` per round, numbered, between its `▸` and its
-`◂`.** The step is entered once and left once, however many rounds it takes: a `▸` per round
-would make a cycle indistinguishable from four steps in a row. Leaving STEP 3 on the first
-round is the defect that costs the most here, and counting the `▪` is what makes it visible
-from the outside.
+**R7 · trace · A stop is an `Out`, not a failure.** STEP 1 and STEP 2 each declare one, and
+the `◂` comes right before the stop message: it is what says which of the checks the run died
+on.
 
-**R7 · A stop is an `Out`, not a failure.** STEP 1 and STEP 2 each declare one, and the `◂`
-comes right before the stop message: it is what says which of the checks the run died on.
+**R8 · trace · The `Out` is one line, and it is never a file.** You tend to hand over what you
+produced as an artifact (`spec.md` is still the only one you write) and to grow the line into
+a section of the report. STEP 5 says what the file holds; the trace says where you were.
 
-**R8 · The `Out` is one line, and it is never a file.** You tend to hand over what you produced
-as an artifact (`spec.md` is still the only one you write) and to grow the line into a
-section of the report. STEP 5 says what the file holds; the trace says where you were.
+**R9 · artifact · None of the `▸`, `▪`, `↳` and `◂` lines goes into `spec.md`, and neither do
+`In` and `Out`.** They are the step's contract and say where the run was; the file has no such
+field, and it is what outlives the run.
 
-**R9 · The `▸`, `▪`, `↳` and `◂` lines go in the conversation and never in `spec.md`.** You tend
-to work in silence and hand over the finished artifact, and then a run that stopped halfway
-looks exactly like one that went through all five steps.
-
-**R64 · `--verbose` in the request makes the rule that decided in silence announce itself**,
-with `↳`, between the step's `▸` and its `◂`, one line per decision carrying the id and what it
-decided:
+**R64 · trace · `--verbose` in the request makes the rule that decided in silence announce
+itself**, with `↳`, between the step's `▸` and its `◂`, one line per decision carrying the id
+and what it decided:
 
 ```
 ▸ STEP 2: WORK OUT THE BEHAVIORS · the list, from what STEP 1 read
 ↳ R22 · rejecting an invalid name on create and on rename: one id, two scenarios
-↳ R24 · expiration and revoking stopped where the request stopped, left out
 ◂ STEP 2 · 5 behaviors
+▸ STEP 3: PROPOSE · 5 behaviors on the table
+↳ R28 · B3 leans on what B1 creates, and this spec delivers both: not asked
 ```
 
 The flag narrates and decides nothing: a run with it and a run without it hand over the same
@@ -92,18 +96,20 @@ The flag narrates and decides nothing: a run with it and a run without it hand o
 for detail as a flag asking for care, and then the same request specifies a different product
 depending on how it was typed.
 
-**R65 · A rule that leaves its trace somewhere else doesn't announce itself.** `R31` is an
-`AskUserQuestion` call sitting in the conversation, `R41` is in the file, `R16` is a command
-nobody ran: citing them buys the reader nothing and buries the lines that are worth something.
-What announces itself is the decision whose only result is a line that isn't there: an id you
-didn't open (`R22`), a `behavior` you kept out (`R24`, `R63`), a question you didn't ask
-(`R28`), a convention that became `Assumed` because there was none to inherit (`R54`). And
-only what you decided in this run: a rule you read and moved past has nothing to report. You
-tend to cite the structural rule, which is the easy one to name, and then the run reports five
-rules the user could have checked without you.
+**R65 · trace · A decision anyone can find somewhere else doesn't announce itself.** `R31` is
+an `AskUserQuestion` call sitting in the conversation, `R41` and `R54` are in the file, `R24`
+and `R63` are already the **Left out** line of the STEP 5 report, `R16` is a command nobody
+ran: citing them buys the reader nothing and buries the lines that are worth something. Two
+kinds are worth a line, and both are decisions nobody could reconstruct afterwards from the
+file or from the report: **an id you didn't open**, where what could have been two `behaviors`
+came out as one (`R22`), and **a question you didn't ask** (`R28`). And only what you decided
+in this run: a rule you read and moved past has nothing to report. You tend to cite the
+structural rule, which is the easy one to name, and then the run reports five rules the user
+could have checked without you.
 
-**R66 · Without `--verbose` no rule id shows up anywhere**: not in the trace, not in the STEP 3
-message, not in the report, not in a stop, not in an answer you give along the way. And not
+**R66 · dialogue · Without `--verbose` no rule id shows up anywhere**: not in the trace, not
+in the STEP 3 message, not in the report, not in a stop, not in an answer you give along the
+way. And not
 the paraphrase either, *the rule says expiration stays out* being the same citation with the
 number filed off. The user asked for the `spec` of a `feature` and has never read this file:
 `R24` points at nothing they can open, and it reads like the system explaining itself instead
@@ -180,6 +186,27 @@ changed direction, part of it was dropped, and none of it was written to become 
 file. Writing the request out costs the user one line and is them signing it. You tend to read
 reusing what was just said as being helpful, and what it actually does is specify a `feature`
 nobody asked for in those words.
+
+**R67 · A request that names an operation without naming what it operates on ends the step the
+same way an empty call does**: `crud`, `a listing screen`, `an endpoint`, `a migration`. Say
+what is missing, ask for the request in writing and stop.
+
+The test is the folder R38 asks for, and it costs one line to run: the shortest name that
+tells this `feature` apart from the others under `specs/`. `crud` gives you `specs/crud/`,
+which distinguishes nothing, and the word that would distinguish it is the one that wasn't
+said. `crud of boards` passes and so does `create an invite`.
+
+You tend to fill the missing noun in from whatever is nearby, the last thing in the
+conversation or the only entity in the repository, and R10 has already ruled both of those
+out. What that produces is not a visible error: it is a plausible `spec.md` for a `feature`
+nobody asked for, permanent and cited by tests.
+
+**R68 · An incomplete request is not this, and it goes through.** `create an invite` says
+nothing about expiration, about the shape of the code or about who is allowed to invite, and
+that is the ordinary case: the failure paths are R23, the values nobody chose are `Assumed`,
+and STEP 3 is where the list gets corrected. What R67 stops is the request with no subject in
+it, which no question in STEP 3 could recover, since R26 asks what changes the table and there
+is no table to change.
 
 **R11 · A `--flag` you don't recognize ends the call the same way**, saying which ones exist.
 There are two, `--assume` and `--verbose`, and one call takes both. A typo in either
