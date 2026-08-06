@@ -26,7 +26,9 @@ effect; a subtle one needs dozens and stops paying.
                -Runs 5
 ```
 
-The runs are parallel processes, roughly three minutes and one dollar for five.
+The runs are parallel processes, and what a batch costs follows `-Model` and `-Effort`: five
+full runs are minutes and around a dollar on a large model, and a fraction of that on a small
+one with low effort.
 
 - `-Fixture` is a project copied fresh per run. It is never this repository: STEP 1 reads the
   repository and STEP 4 writes `specs/<feature>/`, so a run against the framework specifies
@@ -40,6 +42,23 @@ The runs are parallel processes, roughly three minutes and one dollar for five.
   the one thing this cannot reach: the confirmation cycle never runs, so the rules around it
   stay a manual test. `--verbose` is always on, since without the trace there is no telling
   where two runs diverged.
+- `-Model` and `-Effort` fix both for every run in the batch. Left unset, a run inherits
+  whatever the CLI defaults to at that moment, and two batches of the same case then compare
+  across a difference nothing in the output names. Either way `case.md` records what was used.
+- `-StopAfterStep` ends each run once that step is done, through `--append-system-prompt`, so
+  the instrument never enters the request and the skill knows nothing about it. A run cut this
+  way is not the run a user gets: the agent works knowing it stops, so what it measures is the
+  trace and the reading of that step, not the artifact. The cut has to beat the skill's own
+  handover from one step to the next, which is what a run that leaks past the step obeyed
+  instead, so below STEP 4 the instruction bans writing as well and a leak leaves no artifact.
+  Whether it held is read in the traces: a `▸` for a later step is a run that ignored the cut.
+- `-Arm` is which arm this batch is, and it is the last field of the folder name. It defaults
+  to `baseline`, and the ablation is what it exists for: the two arms carry the same `-Name`,
+  the same step and the same model on purpose, so without it the only thing telling them apart
+  in the listing is the timestamp, which says nothing. Kebab-case and short, since it is read
+  in a folder name: `baseline`, `no-r17`, `r17-reworded`.
+- `-Note` is the whole sentence that slug abbreviates: which rule came out of the copy under
+  `-Plugin`, and how. It stays in `case.md`, where there is room for it.
 
 `bypassPermissions` is refused by the permission classifier, so each run is `acceptEdits` with
 `Read Glob Grep Write Edit` allowed. That list adds permissions, it does not confine the run:
@@ -48,7 +67,11 @@ supposed to do is run anything, and `tools.txt` is where that gets checked.
 
 ## What a run leaves behind
 
-Recorded under `runs/<name>-<timestamp>/`, versioned:
+Recorded under `runs/<case>/<timestamp>[_step-N][_<model>]_<arm>/`, git ignored for now. The case is the
+folder, so the batches ablation compares sit side by side under it; inside, the timestamp
+orders them, the step and the model say whether two of them are comparable at all, and the arm
+says what is being compared. The step and the model are left out when they were not fixed. The
+rest, effort and `-Note` included, is in `case.md`:
 
 | file | what it holds |
 |---|---|
@@ -62,5 +85,9 @@ Recorded under `runs/<name>-<timestamp>/`, versioned:
 The counting in `summary.md` says where to look. What the runs disagree about is read in the
 traces, by a human.
 
-The throwaway working copies and the raw `stream-json` stay in the ignored working folder,
-under `Temp/Runs/<name>-<timestamp>/`, and can be deleted at any time.
+The throwaway working copies and the raw `stream-json` stay outside this repository, under
+`../my-sdd-runs/<case>/<timestamp>[_step-N][_<model>]_<arm>/`, and can be deleted at any time. Outside and not in the
+ignored `Temp/`, because `claude` climbs the directory tree from its working directory: a copy
+under this repository inherits this repository's `CLAUDE.md` and `.git`, and the run then reads
+the framework's own source as if it were the project it was asked to specify. `-WorkRoot`
+moves it, and moving it back under the repository is what that bias looks like.

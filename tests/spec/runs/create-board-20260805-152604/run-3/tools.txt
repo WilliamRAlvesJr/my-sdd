@@ -1,9 +1,0 @@
-Skill	my-spec:spec
-Read	C:\Desenv\my-sdd\Temp\Runs\create-board-20260805-152604\run-3\ws\skills\spec\SKILL.md
-Bash	ls -la; echo "---"; find . -name "SKILL.md" -not -path "./.git/*" 2>/dev/null
-Read	C:\Desenv\my-sdd\skills\spec\SKILL.md
-Bash	ls -la src/main/java 2>/dev/null; find src -type f | head -50; echo "--- specs?"; ls -la specs 2>/dev/null || echo "no specs folder"
-Read	C:\Desenv\my-sdd\skills\spec\TEMPLATE.md
-Bash	cat pom.xml; echo "=== application.properties"; cat src/main/resources/application.properties; echo "=== app java"; cat src/main/java/com/william/my_kanban_api/MyKanbanApiApplication.java; echo "=== tests"; cat src/test/java/com/william/my_kanban_api/TestcontainersConfiguration.java; echo "=== CLAUDE?"; ls -a | grep -i claude || echo none; echo "=== resources tree"; find src/main/resources -type f
-Bash	cat src/test/java/com/william/my_kanban_api/TestMyKanbanApiApplication.java; echo "==="; cat src/test/java/com/william/my_kanban_api/MyKanbanApiApplicationTests.java; echo "=== git"; git log --oneline -5
-Write	C:\Desenv\my-sdd\Temp\Runs\create-board-20260805-152604\run-3\ws\specs\create-board\spec.md

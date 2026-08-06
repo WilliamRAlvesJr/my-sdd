@@ -1,4 +1,7 @@
-Temp/
+temp/
+tests/spec/runs/*
+!tests/spec/runs/.gitkeep
+CLAUDE.md
 .Obsidian/
 .DS_Store
 Thumbs.db
