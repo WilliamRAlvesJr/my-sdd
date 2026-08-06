@@ -2,6 +2,7 @@ temp/
 tests/spec/runs/*
 !tests/spec/runs/.gitkeep
 CLAUDE.md
+notes/
 .Obsidian/
 .DS_Store
 Thumbs.db
