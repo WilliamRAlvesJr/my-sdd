@@ -1,0 +1,6 @@
+# record.sh runs as the container's entry point, and a shell refuses a script whose shebang
+# line ends in CR: with core.autocrlf true, which is the default on Windows, a clone would get
+# exactly that and every run would die on `/usr/local/bin/record: not found`. It works here
+# only because the file was written with LF and never round tripped through git.
+*.sh text eol=lf
+Dockerfile text eol=lf
