@@ -1,4 +1,7 @@
 temp/
+.env
+tests/spec/fixtures/*
+!tests/spec/fixtures/.gitkeep
 tests/spec/runs/*
 !tests/spec/runs/.gitkeep
 CLAUDE.md

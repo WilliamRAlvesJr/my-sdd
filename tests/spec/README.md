@@ -19,24 +19,61 @@ effect; a subtle one needs dozens and stops paying.
 
 ## Running one
 
+Every run is a container, so a batch needs the image built once and an account to log in as:
+
+```powershell
+docker build -t my-sdd-runner .
+Copy-Item ..\..\.env.example ..\..\.env    # then put a `claude setup-token` token in it
+```
+
 ```powershell
 .\baseline.ps1 -Name create-board `
-               -Fixture ..\..\Temp\Fixtures\kanban-clean `
+               -Fixture kanban-clean `
                -Request "criar um board" `
                -Runs 5
 ```
 
-The runs are parallel processes, and what a batch costs follows `-Model` and `-Effort`: five
+What the container is for is everything the machine lends a run without being asked: the
+logged in user's `CLAUDE.md`, which runs did read and quote back as the project's convention,
+their `settings.json` with whatever hooks and permissions are in it, whatever `ls` and `find`
+are installed, and a `python` that may or may not be there, which is the difference R71 exists
+to survive. Inside, all of it is declared, and a batch on another machine differs by the prompt
+and nothing else. Only two things are mounted: the copy of the fixture as the working
+directory, and the copy of the plugin, read only.
+
+Authentication is a token from `claude setup-token`, which wants a subscription, so a batch is
+billed where a session already is instead of on an API key. It lives in `CLAUDE_ACCOUNT` in
+`.env` at the repository root, git ignored, with `.env.example` next to it as the form to copy:
+
+```
+CLAUDE_ACCOUNT=sk-ant-oat01-...
+```
+
+It is the account every run of the batch logs in as, and running under another one means
+editing that value. Only that key is read, so the file stays usable for whatever other
+credential the repository comes to need. The token reaches the container in a file rather than
+on the command line, since the command line of a running process is readable and there are five
+of them side by side; the file goes with the throwaway copies and the batch deletes it at the
+end, and nothing from it reaches the recorded batch.
+
+The runs are parallel containers, and what a batch costs follows `-Model` and `-Effort`: five
 full runs are minutes and around a dollar on a large model, and a fraction of that on a small
 one with low effort.
 
-- `-Fixture` is a project copied fresh per run. It is never this repository: STEP 1 reads the
-  repository and STEP 4 writes `specs/<feature>/`, so a run against the framework specifies
-  the framework. A copy per run rather than a reset, because run two would otherwise find the
-  `spec.md` run one wrote and stop at STEP 1, by rule.
+- `-Fixture` is a project copied fresh per run, given as a path or as the name of a folder in
+  `fixtures/`, which is where a clone drops the project it wants to run against: the folder
+  travels empty and git ignored, so no fixture ever lands in the repository. It is never this
+  repository: STEP 1 reads the repository and STEP 4 writes `specs/<feature>/`, so a run
+  against the framework specifies the framework. A copy per run rather than a reset, because
+  run two would otherwise find the `spec.md` run one wrote and stop at STEP 1, by rule.
 - `-Plugin` defaults to this repository's root and reaches the skill through `--plugin-dir`,
   which loads a directory for that session only. The file under review is the file that runs,
-  uncommitted changes and all; the marketplace cache is never read.
+  uncommitted changes and all; the marketplace cache is never read. What runs is a copy of it,
+  holding only what Claude Code loads, because what matters is what sits above the skill:
+  pointed at the repository, `--plugin-dir` leaves `CLAUDE.md`, `notes/` and `tests/` one level
+  up, and the agent has the skill's absolute path in hand. Runs did read the framework's own
+  construction notes that way. An install has none of that above the plugin, so neither does a
+  run, and a reading outside the project is then the skill's defect rather than the harness's.
 - `-Flags` defaults to `--assume --verbose`. `--assume` is what makes an unattended run
   possible at all, since a headless session has no channel to answer STEP 3, and that is also
   the one thing this cannot reach: the confirmation cycle never runs, so the rules around it
@@ -45,13 +82,15 @@ one with low effort.
 - `-Model` and `-Effort` fix both for every run in the batch. Left unset, a run inherits
   whatever the CLI defaults to at that moment, and two batches of the same case then compare
   across a difference nothing in the output names. Either way `case.md` records what was used.
-- `-StopAfterStep` ends each run once that step is done, through `--append-system-prompt`, so
-  the instrument never enters the request and the skill knows nothing about it. A run cut this
-  way is not the run a user gets: the agent works knowing it stops, so what it measures is the
-  trace and the reading of that step, not the artifact. The cut has to beat the skill's own
-  handover from one step to the next, which is what a run that leaks past the step obeyed
-  instead, so below STEP 4 the instruction bans writing as well and a leak leaves no artifact.
-  Whether it held is read in the traces: a `▸` for a later step is a run that ignored the cut.
+- `-StopAfterStep` kills each run the moment it opens the step after this one, so a batch
+  measuring STEP 1 pays for STEP 1. Nothing is said to the run: asking it to stop was tried,
+  and it works most of the time, which is the worst a measurement can be. A run in five obeyed
+  the skill's handover from one step to the next instead, and the wording that finally held was
+  the fourth one written. The mark is what triggers the kill, never the step's number on its
+  own, which turns up in ordinary prose; below STEP 4 an announced `Write` triggers it too, for
+  the run that skips the mark. A killed run says so in `summary.md` and in `meta.txt`, and the
+  numbers the closing event would have carried are empty for it. What a batch cut this way
+  measures is the trace and the reading of that step, not the artifact.
 - `-Arm` is which arm this batch is, and it is the last field of the folder name. It defaults
   to `baseline`, and the ablation is what it exists for: the two arms carry the same `-Name`,
   the same step and the same model on purpose, so without it the only thing telling them apart
@@ -76,11 +115,11 @@ rest, effort and `-Note` included, is in `case.md`:
 | file | what it holds |
 |---|---|
 | `case.md` | the request, the flags, the fixture, and the commit the skill was at, said to be clean or dirty |
-| `summary.md` | one row per run: files written, `behaviors`, `scenarios`, `Assumed`, turns, seconds, cost |
+| `summary.md` | one row per run: the step it was killed at if it was, files written, `behaviors`, `scenarios`, `Assumed`, turns, seconds, cost |
 | `run-N/trace.md` | everything the agent wrote: the `▸ ↳ ◂` lines and the STEP 5 report |
 | `run-N/tools.txt` | one line per tool call, with the file or pattern, which is what the run actually read |
 | `run-N/written/` | every file that appeared in the fixture copy. Anything outside `specs/` is a run that wrote where it was not asked to |
-| `run-N/meta.txt` | exit code, stop reason, turns, duration, cost, permission denials, session id |
+| `run-N/meta.txt` | the step the harness killed it at, exit code, stop reason, turns, duration, cost, permission denials, session id |
 
 The counting in `summary.md` says where to look. What the runs disagree about is read in the
 traces, by a human.
