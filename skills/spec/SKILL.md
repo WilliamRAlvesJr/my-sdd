@@ -23,47 +23,80 @@ to see whether it was followed: `artifact` in what gets written to disk, `run` i
 run ends early and in how many files come out, `dialogue` in what the user is shown and
 asked, `trace` in the `▸ ▪ ↳ ◂` lines and nowhere else.
 
-**R1 · artifact · The only artifact you write is `spec.md`**, one per `feature`, and nothing
-else. No plan, no task list, no code.
-
-**R2 · artifact · Missing decisions don't get settled in the `spec`.** They go under
-`Assumed`, and the one that stops at each of them is `/my-spec:clarify`, later.
-
-**R3 · dialogue · `--assume` in the request drops the STEP 3 message**: no table, no
-questions, no confirmation. Every fork you would have asked about you settle on your own, the
-cut into more than one `spec` among them, and a value nobody chose goes where R53 already puts
-it. The one fork you don't settle is a `feature` the request presupposes and nobody specified:
-it doesn't become a `spec` of its own, it stays a line in the report.
-
-**R4 · run · `--assume` drops a question, never an end of work.** An empty call, a request that
-names no subject, a `spec.md` already written and an empty list of `behaviors` all finish
-exactly the same with the flag as without it: there is no fork at any of them, and nothing to
-assume. Assuming what `crud` is a crud of invents the whole product, not a value in a `Then`.
-A flag that reads like permission to go ahead is the one you most want to run those with.
-
 ## The trace
 
-What a step emits, from the line that opens it to the line that closes it:
+The trace is the `▸ ▪ ↳ ◂` lines and nothing else. Whatever prose you write around them is
+yours: it is neither counted nor forbidden, and it is not part of the trace. What this section
+fixes is the marks, their wording and where they sit. A mark is a line of the message like any
+other, never a code block: the ones in this file sit in fences because they are being shown
+rather than sent.
+
+The four marks, and the only two ids that ever appear on a `↳`:
 
 ```
-▸ STEP [n]: [STEP NAME] · [what this pass is about to do]
-↳ [Rn] · [what the rule decided]
+▸ STEP [n]: [STEP NAME] · [the In, filled in]
+↳ R22 · [what came out as one id and could have been two]
+↳ R28 · [the dependency question you decided not to ask]
 ▪ STEP [n] · round [n] · [what is still open]
 ◂ STEP [n] · [the Out, filled in, or the stop]
 ```
 
+**R69 · trace · Everything up to the `·` is literal, the step's own English name among it, and
+everything after the `·` is written in the language the request came in.** Literal is the
+mark, the word `STEP`, the number and, on the `▸`, the step's name copied from its own
+heading, which is `READ`, `WORK OUT THE BEHAVIORS`, `PROPOSE AND STOP`, `FILL IN THE TEMPLATE`
+and `REPORT`, those five spellings and no translation of any of them. The language the request
+came in is the language of the conversation, the same split R45 makes inside a `scenario`, and
+it decides every mark, every message and the report, whatever language this file is written
+in. The request is in front of you when you open STEP 1, so read which language it is in
+before you write the first mark and stay in it to the last: a request that says `crear una
+invitación` closes STEP 1 on a line in Spanish. You tend to
+copy the skeleton's line whole, placeholder and language along with it, and then one step
+announces itself under two names across two runs and the user reads a step opening in a
+language they didn't write in.
+
+**R72 · trace · What comes after the `·` on a `▸` or a `◂` is that step's `In` or `Out` line,
+filled in: every item the line names, in the order it names them, separated by `;`, and nothing
+besides.** An item that came out empty says it came out empty instead of dropping off, and
+neither mark announces the step that comes next. Each step's `In` and `Out` is already written
+the way its line comes out, item by item and separated by `;`, so filling one in is replacing
+each item with what this run got, never rewriting the line: the values are this run's and the
+words are the language of the conversation. Left to your own wording, the same step closes on a
+clause in one run, on four sentences in the next and on the file's own English in a third, and
+nothing in the three says whether the step did different work or only described itself
+differently.
+
+Every mark of a whole run with `--assume`, in order, with whatever the run wrote around them
+left out. The request came in English, and that is the only reason the marks are in English:
+
+```
+▸ STEP 1: READ · create an invite
+◂ STEP 1 · create an invite; the project answers a rejected field with 422 and a problem+json body; specs/list-invites/ sits next to it and covers the listing; the mail server is off in the test profile, so nothing ending in a delivered e-mail can be verified
+▸ STEP 2: WORK OUT THE BEHAVIORS · everything STEP 1 read
+↳ R22 · rejecting an invalid name on create and on rename: one id, two scenarios
+◂ STEP 2 · 5 behaviors
+▸ STEP 3: PROPOSE AND STOP · 5 behaviors
+↳ R28 · B3 leans on what B1 creates, and this spec delivers both: not asked
+◂ STEP 3 · 5 behaviors settled without asking; specs/create-invite/
+▸ STEP 4: FILL IN THE TEMPLATE · 5 behaviors; specs/create-invite/
+▪ STEP 4 · round 1 · the shape check reports S4 with no Then
+▪ STEP 4 · round 2 · nothing left open
+◂ STEP 4 · specs/create-invite/spec.md; B1 to B5, S1 to S9; 2 Assumed; shape check clean
+▸ STEP 5: REPORT · specs/create-invite/spec.md; the 401 warning; expiration and revoking, left out
+   [the report the step sets out]
+◂ STEP 5 · the report
+```
+
+STEP 1 carries no `↳` and no `▪`, and that is the ordinary shape of a step: it decided
+nothing you had to announce and it cycled through nothing.
+
 **R5 · trace · Every step has an `In` and an `Out`, in the two lines under its heading, and
 you announce both in the conversation**, one line going in, one coming out. `▸` opens the step
-with what it is about to do, and `◂` closes it with its `Out`, filled in with what actually
-came out. You tend to work in silence and hand over the finished artifact, and then a run that
-stopped halfway looks exactly like one that went through all five steps.
-
-**R69 · trace · Everything up to the `·` is literal**: the mark, the word `STEP`, the number
-and, on the `▸`, the step's name spelled exactly as its own heading spells it. What comes
-after the `·` is in the language of the conversation, the same split R45 makes inside a
-`scenario`. You tend to copy the skeleton's line whole, placeholder and language along with
-it, and then one step announces itself under two names across two runs and the user reads a
-step opening in a language they didn't write in.
+with its `In`, filled in, and `◂` closes it with its `Out`, filled in with what actually came
+out. The `▸` goes out before the step's first tool call and the `◂` after its last, so the two
+sit around the work rather than being written up once it is over. You tend to work in silence
+and hand over the finished artifact, and then a run that stopped halfway looks exactly like one
+that went through all five steps.
 
 **R6 · trace · A step that is a cycle emits one `▪` per round, numbered, between its `▸` and
 its `◂`.** The step is entered once and left once, however many rounds it takes: a `▸` per
@@ -83,33 +116,33 @@ a section of the report. STEP 5 says what the file holds; the trace says where y
 `In` and `Out`.** They are the step's contract and say where the run was; the file has no such
 field, and it is what outlives the run.
 
-**R64 · trace · `--verbose` in the request makes the rule that decided in silence announce
-itself**, with `↳`, between the step's `▸` and its `◂`, one line per decision carrying the id
-and what it decided:
-
-```
-▸ STEP 2: WORK OUT THE BEHAVIORS · the list, from what STEP 1 read
-↳ R22 · rejecting an invalid name on create and on rename: one id, two scenarios
-◂ STEP 2 · 5 behaviors
-▸ STEP 3: PROPOSE AND STOP · 5 behaviors on the table
-↳ R28 · B3 leans on what B1 creates, and this spec delivers both: not asked
-```
+**R64 · trace · `--verbose` in the request turns the `↳` line on, and `R22` and `R28` are the
+only two ids that ever sit on one.** A `↳` goes between the step's `▸` and its `◂`, one line
+per decision, carrying what you decided and the id you decided it under. The id is not yours to
+pick: it is one of those two, or the line doesn't come out at all. So a whole run with the flag
+carries `↳ R22` in STEP 2 where you merged, `↳ R28` in STEP 3 where you didn't ask, and nothing
+in the other three steps: the run written out above is a run with the flag, and that is exactly
+what it carries.
 
 The flag narrates and decides nothing: a run with it and a run without it hand over the same
 `spec.md`, ask the same questions and stop at the same places. You tend to read a flag asking
 for detail as a flag asking for care, and then the same request specifies a different product
 depending on how it was typed.
 
-**R65 · trace · A decision anyone can find somewhere else doesn't announce itself.** `R31` is
-an `AskUserQuestion` call sitting in the conversation, `R41` and `R54` are in the file, `R24`
-and `R63` are already the **Left out** line of the STEP 5 report, `R16` is a command nobody
-ran: citing them buys the reader nothing and buries the lines that are worth something. Two
-kinds are worth a line, and both are decisions nobody could reconstruct afterwards from the
-file or from the report: **an id you didn't open**, where what could have been two `behaviors`
-came out as one (`R22`), and **a question you didn't ask** (`R28`). And only what you decided
-in this run: a rule you read and moved past has nothing to report. You tend to cite the
-structural rule, which is the easy one to name, and then the run reports five rules the user
-could have checked without you.
+**R65 · trace · A `↳` only comes out for a decision nobody could reconstruct afterwards from
+the file or from the report**, and that test is what leaves exactly two: **an id you didn't
+open**, where what could have been two `behaviors` came out as one (`R22`), and **a dependency
+question you didn't ask** (`R28`). Every other rule in this file leaves its mark where the user
+is already looking, so a `↳` naming one buys them nothing and buries the two lines that are
+worth something: `R23` and `R24` are which `scenarios` are in the file and which aren't, `R38`
+is the folder name on the STEP 3 `◂`, `R40` and `R41` are the flag the user typed, `R53` and
+`R54` are the `Assumed` block, `R15` is the warning already on the STEP 1 `◂`, `R31` is an
+`AskUserQuestion` call sitting in the conversation. And only what you decided in this run: a
+rule you read and moved past has nothing to report, so a step where you merged nothing and
+asked everything emits no `↳` at all. You tend to read `--verbose` as asking for a line per
+rule you touched, and then the count swings between none and six across runs of the same
+request, naming rules the user could have checked without you and never naming the one thing
+they couldn't.
 
 **R66 · dialogue · Without `--verbose` no rule id shows up anywhere**: not in the trace, not
 in the STEP 3 message, not in the report, not in a stop, not in an answer you give along the
@@ -120,6 +153,26 @@ number filed off. The user asked for the `spec` of a `feature` and has never rea
 of handing over what was asked. Say the decision on its own, the way the STEP 5 report already
 does: *expiration and revoking weren't in the request*. With the flag the ids live on the `↳`
 lines and nowhere else.
+
+## What you hand over
+
+**R1 · artifact · The only artifact you write is `spec.md`**, one per `feature`, and nothing
+else. No plan, no task list, no code.
+
+**R2 · artifact · Missing decisions don't get settled in the `spec`.** They go under
+`Assumed`, and the one that stops at each of them is `/my-spec:clarify`, later.
+
+**R3 · dialogue · `--assume` in the request drops the STEP 3 message**: no table, no
+questions, no confirmation. Every fork you would have asked about you settle on your own, the
+cut into more than one `spec` among them, and a value nobody chose goes where R53 already puts
+it. The one fork you don't settle is a `feature` the request presupposes and nobody specified:
+it doesn't become a `spec` of its own, it stays a line in the report.
+
+**R4 · run · `--assume` drops a question, never an end of work.** An empty call, a request that
+names no subject, a `spec.md` already written and an empty list of `behaviors` all finish
+exactly the same with the flag as without it: there is no fork at any of them, and nothing to
+assume. Assuming what `crud` is a crud of invents the whole product, not a value in a `Then`.
+A flag that reads like permission to go ahead is the one you most want to run those with.
 
 ## Glossary
 
@@ -176,70 +229,73 @@ numbered and nothing cites it.
 
 ## STEP 1: READ
 
-`In` · the call's argument, and nothing else.
+`In` · the call's argument, and nothing else
 
-`Out` · the request, the project's conventions, what already exists around it and the
-obstacles in the way of verifying, or a stop.
+`Out` · the request; the project's conventions; what already exists around it; what stands in
+the way of verifying. Or, where one of this step's checks ended it, which check that was
 
-**R10 · The request is the call's argument, and nothing else, and an empty call ends the step
-right here.** Ask for the request in writing and stop, with no table, no questions and no
-file.
+**R10 · The request is the call's argument and nothing else; an empty call ends the step.**
+Ask for the request in writing and stop, with no table, no questions and no file.
 
 What was said earlier in the conversation doesn't count. That text was written to explore: it
 changed direction, part of it was dropped, and none of it was written to become a permanent
 file. Writing the request out costs the user one line and is them signing it. You tend to read
-reusing what was just said as being helpful, and what it actually does is specify a `feature`
-nobody asked for in those words.
+reusing what was just said as helpful; what it does is specify a `feature` nobody asked for in
+those words.
 
-**R67 · A request that names an operation without naming what it operates on ends the step the
-same way an empty call does**: `crud`, `a listing screen`, `an endpoint`, `a migration`. Say
-what is missing, ask for the request in writing and stop.
+**R67 · A request that names an operation but not what it operates on ends the step like an
+empty call**: `crud`, `a listing screen`, `an endpoint`, `a migration`. Say what is missing,
+ask for the request in writing and stop.
 
-The test is the folder R38 asks for, and it costs one line to run: the shortest name that
-tells this `feature` apart from the others under `specs/`. `crud` gives you `specs/crud/`,
-which distinguishes nothing, and the word that would distinguish it is the one that wasn't
-said. `crud of boards` passes and so does `create an invite`.
+The test is the folder R38 asks for: the shortest name that tells this `feature` apart from
+the others under `specs/`. `crud` gives you `specs/crud/`, which distinguishes nothing, and
+the word that would is the one that wasn't said. `crud of boards` passes and so does `create
+an invite`.
 
-You tend to fill the missing noun in from whatever is nearby, the last thing in the
-conversation or the only entity in the repository, and R10 has already ruled both of those
-out. What that produces is not a visible error: it is a plausible `spec.md` for a `feature`
-nobody asked for, permanent and cited by tests.
+You tend to fill the missing noun in from whatever is nearby: the last thing in the
+conversation, or the only entity in the repository. R10 has already ruled both out. What that
+produces is not a visible error: it is a plausible `spec.md` for a `feature` nobody asked for,
+permanent and cited by tests.
 
-**R68 · An incomplete request is not this, and it goes through.** `create an invite` says
-nothing about expiration, about the shape of the code or about who is allowed to invite, and
-that is the ordinary case: the failure paths are R23, the values nobody chose are `Assumed`,
-and STEP 3 is where the list gets corrected. What R67 stops is the request with no subject in
-it, which no question in STEP 3 could recover, since R26 asks what changes the table and there
-is no table to change.
+**R68 · An incomplete request goes through.** `create an invite` says nothing about
+expiration, the shape of the code or who is allowed to invite, and that is the ordinary case:
+the failure paths are R23, the values nobody chose are `Assumed`, and STEP 3 corrects the
+list. What R67 stops is the request with no subject in it, which no question in STEP 3 could
+recover: R26 asks what changes the table, and there is no table to change.
 
-**R11 · A `--flag` you don't recognize ends the call the same way**, saying which ones exist.
+**R11 · A `--flag` you don't recognize ends the call, saying which ones exist.**
 There are two, `--assume` and `--verbose`, and one call takes both. A typo in either
-(`--asume`) would otherwise ride along as part of the request and stop at STEP 3, which is the
-opposite of what was asked, with nothing said about why.
+(`--asume`) would otherwise ride along as part of the request and stop at STEP 3: the opposite
+of what was asked, with nothing said about why.
 
-The four readings, in this order:
+The four readings, in this order. None of the four emits a `↳`: what they found is the `Out`
+on the `◂`, said once instead of twice.
 
-**R12 · Read `specs/` before anything else, and read it for one question: does the `feature`
-this request lands in already have a `spec`?** Not whether some `spec` covers the request: a
+**R12 · Read `specs/` first, for one question: does the `feature` this request lands in
+already have a `spec`?** Not whether some `spec` covers the request: a
 Boards `spec` holding create and list is where deleting a board belongs, and opening
 `specs/delete-board/` instead splits one `feature` across two files, each with its own `B1`.
 The conventions, what surrounds the request and the obstacles are only worth reading for a
 `feature` you're going to write.
 
-**R13 · Read the project's conventions in `specs/conventions.md` or `CLAUDE.md`**, and failing
-those in the repository: language, the shape of error responses, what the system already does
-in a similar spot. `specs/conventions.md` is `init`'s file, numbered `C1`, `C2`,
-and it wins where the two disagree: it was written for this, and `CLAUDE.md` is whatever the
-project already had. An empty project has nothing to inherit, so pick. The first `feature`
-sets the convention for every one after it, and the user confirms that now instead of finding
-out six `features` later.
+**R13 · Read the project's conventions in `specs/conventions.md` or `CLAUDE.md`, both from the
+project's root and nowhere else**, and failing those in the repository: language, the shape of
+error responses, what the system already does in a similar spot. Everything this step opens is
+under that root. A file of either name outside it belongs to whoever owns the machine, or to
+the framework itself: a preference of theirs read as a convention of this project is a
+decision the repository had no part in, permanent in the `spec` and cited by tests.
+`specs/conventions.md` is `init`'s file, numbered `C1`, `C2`, and it wins where the two
+disagree: it was written for this, and `CLAUDE.md` is whatever the project already had. An
+empty project has nothing to inherit, so pick. The first `feature` sets the convention for
+every one after it, and the user confirms that now instead of finding out six `features`
+later.
 
 **R14 · Read the other `specs` and the repository for what surrounds the request, and write
 down what you find without ruling on it**: a `behavior` another `spec` covers, one that already
 works and nobody's going to touch, and whether what the request leans on exists at all. Say
-what it is and where it lives, and stop there. Whose each one is decides between staying out of
-the file and ending the run, and STEP 2 is where that falls, since the boundary only exists
-once the list does: here you would be drawing it from a name and a domain.
+what it is and where it lives, and stop there. Whose each one is decides between staying out
+of the file and ending the run, and that falls in STEP 2: the boundary only exists once the
+list does, and here you would be drawing it from a name and a domain.
 
 **R15 · Read the repository for what blocks verification**: a dependency that blocks every
 call, a setting without which the app won't start, a file that won't compile. With one of those
@@ -285,10 +341,10 @@ obstacle, and that workaround stays forever in a file the tests cite.
 
 ## STEP 2: WORK OUT THE BEHAVIORS
 
-`In` · everything STEP 1 read.
+`In` · everything STEP 1 read
 
-`Out` · one line per `behavior`, or an end of run: an empty list, or a list with a `behavior`
-the system already delivers.
+`Out` · how many `behaviors`. Or, where the run ended here, which of the two ended it: an empty
+list, or a list holding a `behavior` the system already delivers
 
 **R20 · An empty list of `behaviors` doesn't become a `spec`, and the step ends right
 here.** Adding a folder
@@ -332,7 +388,9 @@ product and part of it is already standing.
 
 **R22 · One id per decision, not per action.** Rejecting an invalid name on create and on
 rename is the same decision in two places: one id, two `scenarios`. The different action is
-what jumps out at you, and that's why you split too much.
+what jumps out at you, and that's why you split too much. With `--verbose` this is one of the
+two rules that emits a `↳`, on a merge you actually made and on nothing else: no merge in this
+run, no line.
 
 **R23 · Write the failure paths along with the one that works**: invalid input, something
 that isn't there, an impossible state, the same call twice. Nobody asks for these, and they're
@@ -358,9 +416,10 @@ flowchart LR
 
 ## STEP 3: PROPOSE AND STOP
 
-`In` · the list from STEP 2.
+`In` · how many `behaviors` STEP 2 worked out
 
-`Out` · that list confirmed and the folder name, one of each per `spec`, after a split.
+`Out` · the list as the user confirmed it; the folder name. One of each per `spec`, after a
+split
 
 One line per `behavior`, with no `scenarios` at all:
 
@@ -415,7 +474,9 @@ and what is left is the order the work gets done, which is the `tasks` job. Don'
 when the `feature` itself delivers it: `B3` needing what `B1` creates is the ordinary shape of
 a `spec`. And never turn any of it into a stop: specifying isn't building, the `spec.md`
 comes out correct either way, and the user is the one who knows whether that dependency is
-with somebody else, due next sprint, or already live in another system.
+with somebody else, due next sprint, or already live in another system. With `--verbose` this
+is the other rule that emits a `↳`, on a dependency you found and decided not to ask about: no
+such dependency in this run, no line.
 
 **R29 · Questions go in the option selector, not in the text**: an `AskUserQuestion` call
 right after the message, one question per open item. The table and the warning stay where they
@@ -510,9 +571,10 @@ final report.
 
 ## STEP 4: FILL IN THE TEMPLATE
 
-`In` · the confirmed list and the folders from STEP 3.
+`In` · the confirmed list; the folders from STEP 3
 
-`Out` · one `spec.md` written per folder, ids fixed, `Assumed` in place.
+`Out` · the `spec.md` written in each folder; the ids it fixed; how many `Assumed` lines; how
+the shape check came out
 
 **R41 ·** Write a `spec.md` inside each folder STEP 3 settled, copied from `TEMPLATE.md`.
 Anything left over from the skeleton gets deleted: brackets you didn't fill in, an empty
@@ -618,11 +680,41 @@ first `scenario` is `S3` if `B1` had two. Numbering `B2.S1` would say twice wher
 remove stays empty forever, since some test may cite that number, and the replacement comes
 in with the next free id, even when it belongs in the middle of the file.
 
+### The shape check
+
+**R70 · artifact · Run `scripts/validate.py`, next to this file, over every `spec.md` you
+wrote, and don't leave STEP 4 while it still reports a problem.** Call it with the absolute
+path of this skill's folder, and the interpreter is `python3` where there is one and `python`
+where there isn't:
+
+```
+python3 <this skill's folder>/scripts/validate.py specs/create-invite/spec.md
+```
+
+It needs no package and no virtual environment, it reads and writes nothing, and a folder
+argument takes every `spec.md` under it, which is one call for a split. What it checks is the
+shape `TEMPLATE.md` declares: a heading that isn't `## B<n> ·`, a fenced block that isn't
+`gherkin`, a `scenario` with no `Then`, an id out of sequence, an `Examples` column no step
+uses, a bracket left over from the skeleton. It rules on nothing else, so a clean run says
+the file is well formed, not that the `spec` is right.
+
+The step is a cycle from here, and it emits one `▪` per round, numbered, the way R6 says:
+write, run, fix, run again. **What you fix is `spec.md`, and never the script.** You tend to
+make a failing check pass by changing what does the checking, and this one belongs to the
+framework the user installed: editing it turns one malformed file into every file after it.
+
+**R71 · run · A check that doesn't run and a check that won't come clean are both one line in
+the STEP 5 report, and neither is a stop.** No interpreter on the machine, a shell tool the
+user denied, or the same problem surviving three rounds: the `spec.md` is written either way,
+and shape is the cheapest thing in the file to fix later. Say in one sentence which of them
+happened and carry on. You tend to read a tool that answers with an error as an obstacle to
+work around, and here that ends a run whose artifact was already on disk.
+
 ## STEP 5: REPORT
 
-`In` · the files from STEP 4, plus the warnings and what stayed out, carried since STEP 1.
+`In` · the files from STEP 4; the warnings and what stayed out, carried since STEP 1
 
-`Out` · the report message. No file.
+`Out` · the report. No file
 
 The file, and then what it doesn't show:
 
