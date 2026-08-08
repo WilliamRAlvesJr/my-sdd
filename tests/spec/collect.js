@@ -6,7 +6,7 @@
 // whatever can start a container can record a batch. It is mounted rather than baked into the
 // image, so changing it costs no rebuild.
 //
-// Mounts, all from baseline.ps1: /batch is the throwaway working copies, /out is the recorded
+// Mounts, all from baseline.sh: /batch is the throwaway working copies, /out is the recorded
 // batch inside the repository, /fixture is what every copy started as.
 
 const fs = require('fs');
@@ -17,6 +17,7 @@ const OUT = '/out';
 const FIXTURE = '/fixture';
 
 const plan = JSON.parse(fs.readFileSync(path.join(BATCH, 'runs.json'), 'utf8'));
+const verbose = (plan.flags || '').split(/\s+/).includes('--verbose');
 
 const rows = [];
 for (const run of plan.runs) {
@@ -30,6 +31,10 @@ for (const run of plan.runs) {
 
   const written = copyWhatTheRunWrote(path.join(runDir, 'ws'), outDir);
   const counts = countSpecs(outDir, written);
+
+  const cites = readCitations(text, verbose, counts.specs ? counts.widest >= 2 : null);
+  fs.writeFileSync(path.join(outDir, 'cites.txt'),
+    cites.map((c) => `STEP ${c.step}\t${c.id}\t${c.verdict}`).join('\n'));
 
   // A killed run never emits the closing event, so everything the result carries is missing
   // for it: turns, duration and cost included. What the row has to say about that run is the
@@ -57,6 +62,8 @@ for (const run of plan.runs) {
     behaviors: counts.behaviors,
     scenarios: counts.scenarios,
     assumed: counts.assumed,
+    cites: cites.length,
+    off: cites.filter((c) => c.verdict !== 'ok').length,
     turns: got.num_turns === undefined ? '' : got.num_turns,
     seconds: got.duration_ms === undefined ? '' : Math.round(got.duration_ms / 1000),
     usd: got.total_cost_usd === undefined ? '' : round(got.total_cost_usd, 3),
@@ -66,11 +73,11 @@ for (const run of plan.runs) {
 
 // Counting only. What the runs disagree about is read by a human, in the traces.
 const summary = [`# ${plan.title}`, ''];
-summary.push('| run | killed | specs | behaviors | scenarios | assumed | turns | seconds | usd |');
-summary.push('|---|---|---|---|---|---|---|---|---|');
+summary.push('| run | killed | specs | behaviors | scenarios | assumed | cites | off | turns | seconds | usd |');
+summary.push('|---|---|---|---|---|---|---|---|---|---|---|');
 for (const r of rows) {
   summary.push(`| ${r.run} | ${r.killed} | ${r.specs} | ${r.behaviors} | ${r.scenarios} | ` +
-               `${r.assumed} | ${r.turns} | ${r.seconds} | ${r.usd} |`);
+               `${r.assumed} | ${r.cites} | ${r.off} | ${r.turns} | ${r.seconds} | ${r.usd} |`);
 }
 summary.push('');
 for (const r of rows) summary.push(`- **${r.run}** wrote: ${r.written}`);
@@ -79,7 +86,7 @@ fs.writeFileSync(path.join(OUT, 'summary.md'), summary.join('\n'));
 // One row per line for the console table the batch prints when it ends.
 for (const r of rows) {
   process.stdout.write([r.run, r.killed, r.specs, r.behaviors, r.scenarios, r.assumed,
-                        r.turns, r.seconds, r.usd, r.written].join('\t') + '\n');
+                        r.cites, r.off, r.turns, r.seconds, r.usd, r.written].join('\t') + '\n');
 }
 
 function readStream(rawPath) {
@@ -144,14 +151,53 @@ function copyWhatTheRunWrote(ws, outDir) {
 
 function countSpecs(outDir, written) {
   const specs = written.filter((w) => w.endsWith('spec.md'));
-  let behaviors = 0, scenarios = 0, assumed = 0;
+  let behaviors = 0, scenarios = 0, assumed = 0, widest = 0;
   for (const sp of specs) {
     const body = fs.readFileSync(path.join(outDir, 'written', sp), 'utf8');
     behaviors += (body.match(/^##\s+B\d+/gm) || []).length;
     scenarios += (body.match(/^\s*Scenario(\s+Outline)?:/gm) || []).length;
     assumed += (body.match(/^\s+-\s+(?!\*\*Assumed)/gm) || []).length;
+
+    // The most scenarios any one behavior carries, which is the only trace of a merge that
+    // survives into the file: R22 says one id and two scenarios, so a file whose widest
+    // behavior holds one is a file where nothing was merged.
+    let here = 0;
+    for (const line of body.split('\n')) {
+      if (/^##\s+B\d+/.test(line)) { here = 0; continue; }
+      if (/^\s*Scenario(\s+Outline)?:/.test(line) && ++here > widest) widest = here;
+    }
   }
-  return { specs: specs.length, behaviors, scenarios, assumed };
+  return { specs: specs.length, behaviors, scenarios, assumed, widest };
+}
+
+// The ↳ line is the one part of the trace a script can rule on, and the four things it can
+// rule on are R64's two ids, R65's one place for each, R66's silence without the flag, and the
+// merge R22 announces, which has to be in the file it announced it about. What the line says
+// beyond that is prose, and prose is read in the trace by a human: a run citing R22 for having
+// split rather than merged passes every check here.
+function readCitations(text, verbose, merged) {
+  const found = [];
+  let step = '';
+  for (const line of text.join('\n').split('\n')) {
+    const opened = line.match(/▸\s*STEP\s*(\d+)/);
+    if (opened) { step = opened[1]; continue; }
+    if (!line.includes('↳')) continue;
+    const id = (line.match(/\bR\d+\b/) || [''])[0];
+    found.push({ step, id: id || '-', verdict: judge(step, id, verbose, merged) });
+  }
+  return found;
+}
+
+function judge(step, id, verbose, merged) {
+  if (!verbose) return 'off: no flag';
+  if (!id) return 'off: no id';
+  if (id !== 'R22' && id !== 'R28') return 'off: id';
+  if (id === 'R22' && step !== '2') return 'off: step';
+  if (id === 'R28' && step !== '3') return 'off: step';
+  // A batch cut before STEP 4 has no file to check the merge against, and calling that a false
+  // citation would blame the harness for where it stopped.
+  if (id === 'R22' && merged === false) return 'off: no merge in the file';
+  return 'ok';
 }
 
 function round(n, digits) {

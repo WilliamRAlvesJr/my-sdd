@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN npm install -g @anthropic-ai/claude-code
 
 # What a run is from the inside, session and cut both, and record.sh says why it is in here
-# rather than on the host. It is the image's entry point for a run: baseline.ps1 calls `record`
+# rather than on the host. It is the image's entry point for a run: baseline.sh calls `record`
 # and passes it the claude arguments.
 COPY record.sh /usr/local/bin/record
 COPY watch.js /usr/local/bin/watch.js
