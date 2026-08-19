@@ -34,11 +34,11 @@ for (const run of plan.runs) {
 
   const cites = readCitations(text, verbose, counts.specs ? counts.widest >= 2 : null);
   fs.writeFileSync(path.join(outDir, 'cites.txt'),
-    cites.map((c) => `STEP ${c.step}\t${c.id}\t${c.verdict}`).join('\n'));
+    cites.map((c) => `PHASE ${c.phase}\t${c.id}\t${c.verdict}`).join('\n'));
 
   // A killed run never emits the closing event, so everything the result carries is missing
   // for it: turns, duration and cost included. What the row has to say about that run is the
-  // step it opened, and the empty numbers next to it are the second half of the same fact.
+  // phase it opened, and the empty numbers next to it are the second half of the same fact.
   const got = result || {};
   const meta = [
     ['killed', run.killed || ''],
@@ -89,12 +89,22 @@ for (const r of rows) {
                         r.cites, r.off, r.turns, r.seconds, r.usd, r.written].join('\t') + '\n');
 }
 
+// Every tool call carries the phase that was open when it was made, taken from the last ▸ the run
+// had written by then. Without it the file says what was read and never when, and a TEMPLATE.md
+// opened in PHASE 4 reads exactly like one opened in PHASE 1, which is the difference the whole
+// question of reading ahead turns on. A call before the first mark carries `-`.
 function readStream(rawPath) {
   const text = [];
   const tools = [];
   let result = null;
+  let seen = '';
+  let phase = '-';
+  const openPhase = () => {
+    const marks = [...seen.matchAll(/▸\s*PHASE\s*(\d+)/g)];
+    if (marks.length) phase = marks[marks.length - 1][1];
+  };
   // The message the kill lands in the middle of never reaches the stream in its finished form,
-  // and that message is the one holding the Out line of the very step being measured. So the
+  // and that message is the one holding the Out line of the very phase being measured. So the
   // deltas are kept as they arrive and thrown away as soon as the finished version of the same
   // message turns up: what survives at the end is exactly the piece that was being written
   // when the run died.
@@ -108,16 +118,22 @@ function readStream(rawPath) {
       const event = o.event || {};
       if (event.type === 'content_block_delta' && (event.delta || {}).type === 'text_delta') {
         partial += event.delta.text || '';
+        seen += event.delta.text || '';
+        openPhase();
       }
     } else if (o.type === 'assistant') {
       partial = '';
       for (const c of (o.message || {}).content || []) {
-        if (c.type === 'text' && c.text.trim()) text.push(c.text);
+        if (c.type === 'text' && c.text.trim()) {
+          text.push(c.text);
+          seen += c.text;
+          openPhase();
+        }
         if (c.type === 'tool_use') {
           const input = c.input || {};
           const key = ['file_path', 'pattern', 'path', 'command', 'skill']
             .find((k) => k in input);
-          tools.push(`${c.name}\t${key ? String(input[key]) : ''}`);
+          tools.push(`PHASE ${phase}\t${c.name}\t${key ? String(input[key]) : ''}`);
         }
       }
     } else if (o.type === 'result') {
@@ -177,24 +193,24 @@ function countSpecs(outDir, written) {
 // split rather than merged passes every check here.
 function readCitations(text, verbose, merged) {
   const found = [];
-  let step = '';
+  let phase = '';
   for (const line of text.join('\n').split('\n')) {
-    const opened = line.match(/▸\s*STEP\s*(\d+)/);
-    if (opened) { step = opened[1]; continue; }
+    const opened = line.match(/▸\s*PHASE\s*(\d+)/);
+    if (opened) { phase = opened[1]; continue; }
     if (!line.includes('↳')) continue;
     const id = (line.match(/\bR\d+\b/) || [''])[0];
-    found.push({ step, id: id || '-', verdict: judge(step, id, verbose, merged) });
+    found.push({ phase, id: id || '-', verdict: judge(phase, id, verbose, merged) });
   }
   return found;
 }
 
-function judge(step, id, verbose, merged) {
+function judge(phase, id, verbose, merged) {
   if (!verbose) return 'off: no flag';
   if (!id) return 'off: no id';
   if (id !== 'R22' && id !== 'R28') return 'off: id';
-  if (id === 'R22' && step !== '2') return 'off: step';
-  if (id === 'R28' && step !== '3') return 'off: step';
-  // A batch cut before STEP 4 has no file to check the merge against, and calling that a false
+  if (id === 'R22' && phase !== '2') return 'off: phase';
+  if (id === 'R28' && phase !== '3') return 'off: phase';
+  // A batch cut before PHASE 4 has no file to check the merge against, and calling that a false
   // citation would blame the harness for where it stopped.
   if (id === 'R22' && merged === false) return 'off: no merge in the file';
   return 'ok';

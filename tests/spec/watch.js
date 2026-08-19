@@ -1,22 +1,22 @@
 // Watches a run's stream from inside its own container and kills the session the moment it
-// opens a step past the one the batch is measuring. record.sh starts it; nothing here reaches
+// opens a phase past the one the batch is measuring. record.sh starts it; nothing here reaches
 // the session, which is told nothing about being cut.
 //
 // It reads the stream rather than grepping it, and both reasons cost a batch to find out.
-// Thinking is not the trace: the model writes the next step's mark while reasoning about it,
-// well before writing the closing line of the step being measured, and a grep over the file
+// Thinking is not the trace: the model writes the next phase's mark while reasoning about it,
+// well before writing the closing line of the phase being measured, and a grep over the file
 // killed two runs of five before their own Out line existed. And a delta is not a line: the
 // visible text arrives in fragments of arbitrary length, so the mark itself can straddle two
 // of them and match neither.
 //
-// Usage: node watch.js <pid> <stopAfterStep>
+// Usage: node watch.js <pid> <stopAfterPhase>
 
 const fs = require('fs');
 
 const RAW = '/run/raw.jsonl';
 const VERDICT = '/run/killed.txt';
 const pid = Number(process.argv[2]);
-const stopAfterStep = Number(process.argv[3]);
+const stopAfterPhase = Number(process.argv[3]);
 
 let offset = 0;
 let pending = '';   // the tail of the file that is not a whole line yet
@@ -29,8 +29,8 @@ function tick() {
   if (!alive()) return done();
   read();
 
-  for (const m of visible.matchAll(/▸\s*STEP\s*(\d+)/g)) {
-    if (Number(m[1]) > stopAfterStep) { why = `STEP ${m[1]}`; break; }
+  for (const m of visible.matchAll(/▸\s*PHASE\s*(\d+)/g)) {
+    if (Number(m[1]) > stopAfterPhase) { why = `PHASE ${m[1]}`; break; }
   }
   if (why) return kill();
 }
@@ -55,10 +55,10 @@ function read() {
       if (event.type === 'content_block_delta' && (event.delta || {}).type === 'text_delta') {
         visible += event.delta.text || '';
       }
-      // The tool call that only STEP 4 makes is the second thing worth killing on, for the run
-      // that writes the file without announcing the step. It fires on the call being announced,
+      // The tool call that only PHASE 4 makes is the second thing worth killing on, for the run
+      // that writes the file without announcing the phase. It fires on the call being announced,
       // before the arguments are even generated, so the file is never written.
-      if (event.type === 'content_block_start' && stopAfterStep < 4) {
+      if (event.type === 'content_block_start' && stopAfterPhase < 4) {
         const block = event.content_block || {};
         if (block.type === 'tool_use' && (block.name === 'Write' || block.name === 'Edit')) {
           why = `a ${block.name} call`;
@@ -67,7 +67,7 @@ function read() {
     } else if (o.type === 'assistant') {
       for (const c of (o.message || {}).content || []) {
         if (c.type === 'text') visible += c.text || '';
-        if (c.type === 'tool_use' && stopAfterStep < 4 &&
+        if (c.type === 'tool_use' && stopAfterPhase < 4 &&
             (c.name === 'Write' || c.name === 'Edit')) {
           why = `a ${c.name} call`;
         }

@@ -5,17 +5,17 @@
 # from here rather than from the host. Both are about when the cut gets to see a line. What the
 # docker client prints arrives in blocks, and a bind mount on Docker Desktop propagates a write
 # to the host in its own time: a watcher on the far side of either reads the opening mark of the
-# next step late, and a batch cut at STEP 1 then pays for the whole of STEP 2. In here the file
+# next phase late, and a batch cut at PHASE 1 then pays for the whole of PHASE 2. In here the file
 # is local.
 #
 # None of this reaches the session: the watcher is a sibling process, and the agent is told
-# nothing. STOP_AFTER_STEP is the step the batch is measuring, and an unset one runs to the end.
+# nothing. STOP_AFTER_PHASE is the phase the batch is measuring, and an unset one runs to the end.
 
 claude "$@" > /run/raw.jsonl 2> /run/err.txt &
 pid=$!
 
-if [ -n "${STOP_AFTER_STEP:-}" ] && [ "$STOP_AFTER_STEP" -gt 0 ]; then
-    node /usr/local/bin/watch.js "$pid" "$STOP_AFTER_STEP" &
+if [ -n "${STOP_AFTER_PHASE:-}" ] && [ "$STOP_AFTER_PHASE" -gt 0 ]; then
+    node /usr/local/bin/watch.js "$pid" "$STOP_AFTER_PHASE" &
     watcher=$!
 fi
 

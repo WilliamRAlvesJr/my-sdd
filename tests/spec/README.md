@@ -68,9 +68,9 @@ one with low effort.
 - `--fixture` is a project copied fresh per run, given as a path or as the name of a folder in
   `fixtures/`, which is where a clone drops the project it wants to run against: the folder
   travels empty and git ignored, so no fixture ever lands in the repository. It is never this
-  repository: STEP 1 reads the repository and STEP 4 writes `specs/<feature>/`, so a run
+  repository: PHASE 1 reads the repository and PHASE 4 writes `specs/<feature>/`, so a run
   against the framework specifies the framework. A copy per run rather than a reset, because
-  run two would otherwise find the `spec.md` run one wrote and stop at STEP 1, by rule.
+  run two would otherwise find the `spec.md` run one wrote and stop at PHASE 1, by rule.
 - `--plugin` defaults to this repository's root and reaches the skill through `--plugin-dir`,
   which loads a directory for that session only. The file under review is the file that runs,
   uncommitted changes and all; the marketplace cache is never read. What runs is a copy of it,
@@ -80,70 +80,74 @@ one with low effort.
   construction notes that way. An install has none of that above the plugin, so neither does a
   run, and a reading outside the project is then the skill's defect rather than the harness's.
 - `--flags` defaults to `--assume --verbose`. `--assume` is what makes an unattended run
-  possible at all, since a headless session has no channel to answer STEP 3, and that is also
+  possible at all, since a headless session has no channel to answer PHASE 3, and that is also
   the one thing this cannot reach: the confirmation cycle never runs, so the rules around it
   stay a manual test. `--verbose` is always on, since without the trace there is no telling
   where two runs diverged.
 - `--model` and `--effort` fix both for every run in the batch. Left unset, a run inherits
   whatever the CLI defaults to at that moment, and two batches of the same case then compare
   across a difference nothing in the output names. Either way `case.md` records what was used.
-- `--stop-after-step` kills each run the moment it opens the step after this one, so a batch
-  measuring STEP 1 pays for STEP 1. Nothing is said to the run: asking it to stop was tried,
+- `--stop-after-phase` kills each run the moment it opens the phase after this one, so a batch
+  measuring PHASE 1 pays for PHASE 1. Nothing is said to the run: asking it to stop was tried,
   and it works most of the time, which is the worst a measurement can be. A run in five obeyed
-  the skill's handover from one step to the next instead, and the wording that finally held was
-  the fourth one written. The mark is what triggers the kill, never the step's number on its
-  own, which turns up in ordinary prose; below STEP 4 an announced `Write` triggers it too, for
+  the skill's handover from one phase to the next instead, and the wording that finally held was
+  the fourth one written. The mark is what triggers the kill, never the phase's number on its
+  own, which turns up in ordinary prose; below PHASE 4 an announced `Write` triggers it too, for
   the run that skips the mark. A killed run says so in `summary.md` and in `meta.txt`, and the
   numbers the closing event would have carried are empty for it. What a batch cut this way
-  measures is the trace and the reading of that step, not the artifact.
+  measures is the trace and the reading of that phase, not the artifact.
 - `--arm` is which arm this batch is, and it is the last field of the folder name. It defaults
   to `baseline`, and the ablation is what it exists for: the two arms carry the same `--name`,
-  the same step and the same model on purpose, so without it the only thing telling them apart
+  the same phase and the same model on purpose, so without it the only thing telling them apart
   in the listing is the timestamp, which says nothing. Kebab-case and short, since it is read
   in a folder name: `baseline`, `no-r17`, `r17-reworded`.
 - `--note` is the whole sentence that slug abbreviates: which rule came out of the copy under
   `--plugin`, and how. It stays in `case.md`, where there is room for it.
 
 `bypassPermissions` is refused by the permission classifier, so each run is `acceptEdits` with
-`Read Glob Grep Write Edit` allowed. That list adds permissions, it does not confine the run:
-every run so far reached for `Bash` to list and read files, and got it. What the runs are not
-supposed to do is run anything, and `tools.txt` is where that gets checked.
+`Read Glob Grep Write Edit` and `Bash(python3 /plugin/skills/<skill>/scripts/:*)` allowed. That list adds permissions, it does
+not confine the run: every run so far reached for `Bash` to list and read files, and got it.
+The interpreter is on the list because a phase runs the skill's own validator, and a run that
+built the call correctly had it denied and then reported the check as if it had passed. The
+pattern is the skill's own `scripts/` folder and not `python3` on its own, so what a run can
+execute is what the plugin ships: a build, a test and a `python3 -c` still come back denied,
+and `tools.txt` is where that gets checked.
 
 ## What a run leaves behind
 
-Recorded under `runs/<fixture>/<case>/<timestamp>[_step-N][_<model>]_<arm>/`, git ignored for now.
+Recorded under `runs/<fixture>/<case>/<timestamp>[_phase-N][_<model>]_<arm>/`, git ignored for now.
 The fixture is the outermost folder, because two batches of the same case against different
 projects are not a series and under one folder the timestamps read as if they compared. The case
 is the folder under it, so the batches ablation compares sit side by side; inside, the timestamp
-orders them, the step and the model say whether two of them are comparable at all, and the arm
-says what is being compared. The step and the model are left out when they were not fixed. The
+orders them, the phase and the model say whether two of them are comparable at all, and the arm
+says what is being compared. The phase and the model are left out when they were not fixed. The
 rest, effort and `-Note` included, is in `case.md`:
 
 | file | what it holds |
 |---|---|
 | `case.md` | the request, the flags, the fixture, and the commit the skill was at, said to be clean or dirty |
-| `summary.md` | one row per run: the step it was killed at if it was, files written, `behaviors`, `scenarios`, `Assumed`, `↳` lines and how many of them were off, turns, seconds, cost |
-| `run-N/trace.md` | everything the agent wrote: the marks, the prose around them and the STEP 5 report |
-| `run-N/cites.txt` | one line per `↳`, with the step it came out in, the id it carried and what is wrong with it |
-| `run-N/tools.txt` | one line per tool call, with the file or pattern, which is what the run actually read |
+| `summary.md` | one row per run: the phase it was killed at if it was, files written, `behaviors`, `scenarios`, `Assumed`, `↳` lines and how many of them were off, turns, seconds, cost |
+| `run-N/trace.md` | everything the agent wrote: the marks, the prose around them and the PHASE 5 report |
+| `run-N/cites.txt` | one line per `↳`, with the phase it came out in, the id it carried and what is wrong with it |
+| `run-N/tools.txt` | one line per tool call, with the phase that was open when it was made and the file or pattern, which is what the run actually read and when |
 | `run-N/written/` | every file that appeared in the fixture copy. Anything outside `specs/` is a run that wrote where it was not asked to |
-| `run-N/meta.txt` | the step the harness killed it at, exit code, stop reason, turns, duration, cost, permission denials, session id |
+| `run-N/meta.txt` | the phase the harness killed it at, exit code, stop reason, turns, duration, cost, permission denials, session id |
 
 The counting in `summary.md` says where to look. What the runs disagree about is read in the
 traces, by a human.
 
 The `off` column is the one count that rules rather than measures, and it rules on four things:
-a `↳` carrying an id that is not `R22` or `R28`, one carrying no id at all, `R22` outside STEP 2
-or `R28` outside STEP 3, and a batch whose flags left `--verbose` out emitting any `↳` at all.
+a `↳` carrying an id that is not `R22` or `R28`, one carrying no id at all, `R22` outside PHASE 2
+or `R28` outside PHASE 3, and a batch whose flags left `--verbose` out emitting any `↳` at all.
 `R22` gets a fifth, against the file the same run wrote: it announces one id and two
 `scenarios`, so a `spec.md` whose widest `behavior` holds a single `scenario` is one where the
-merge never happened. A batch cut before STEP 4 has no file, and there the check stays quiet
+merge never happened. A batch cut before PHASE 4 has no file, and there the check stays quiet
 rather than blaming the run for where the harness stopped. What the line *says* is not ruled
 on: a run citing `R22` for having split rather than merged counts as clean, and that is what
 the trace is read for.
 
 The throwaway working copies and the raw `stream-json` stay outside this repository, under
-`../my-sdd-runs/<fixture>/<case>/<timestamp>[_step-N][_<model>]_<arm>/`, mirroring the layout above,
+`../my-sdd-runs/<fixture>/<case>/<timestamp>[_phase-N][_<model>]_<arm>/`, mirroring the layout above,
 and can be deleted at any time. Outside and not in the
 ignored `Temp/`, because `claude` climbs the directory tree from its working directory: a copy
 under this repository inherits this repository's `CLAUDE.md` and `.git`, and the run then reads
